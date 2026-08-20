@@ -16,10 +16,8 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="d-flex flex-column min-vh-100 bg-light">
-          {/* Navbar luôn hiển thị */}
           <HeaderNavbar />
           
-          {/* Nội dung chính của các trang */}
           <main className="flex-grow-1">
             <Routes>
               <Route path="/" element={<Homepage />} />
@@ -32,7 +30,6 @@ function App() {
             </Routes>
           </main>
           
-          {/* Footer luôn hiển thị */}
           <Footer />
         </div>
       </Router>

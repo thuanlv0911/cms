@@ -12,7 +12,6 @@ const Login = () => {
   const { login, currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // If already logged in, redirect to homepage
   useEffect(() => {
     if (currentUser) {
       navigate('/');
@@ -28,7 +27,6 @@ const Login = () => {
     setLoading(false);
 
     if (res.success) {
-      // Redirect based on role or just to homepage
       if (res.user.role === 'admin') {
         navigate('/admin/accounts');
       } else if (res.user.role === 'pdp') {

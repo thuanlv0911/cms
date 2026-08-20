@@ -8,24 +8,20 @@ const HeaderNavbar = () => {
   const { currentUser, logout, changePassword } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Modals state
   const [showProfile, setShowProfile] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   
-  // Password form state
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [pwError, setPwError] = useState('');
   const [pwSuccess, setPwSuccess] = useState('');
 
-  // Handle Logout
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
-  // Handle Password Change
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     setPwError('');
@@ -56,7 +52,6 @@ const HeaderNavbar = () => {
     }
   };
 
-  // Determine Dashboard Path
   const getDashboardPath = () => {
     if (!currentUser) return '/';
     if (currentUser.role === 'admin') return '/admin';
@@ -69,7 +64,6 @@ const HeaderNavbar = () => {
     <>
       <Navbar bg="light" expand="lg" className="border-bottom sticky-top shadow-sm py-2">
         <Container>
-          {/* Logo bên trái */}
           <Navbar.Brand as={Link} to="/" className="fw-bold text-orange d-flex align-items-center">
             <span className="fs-3 me-2">🍊</span>
             <span className="d-none d-sm-inline text-dark">FPTU CLB</span>
@@ -78,13 +72,11 @@ const HeaderNavbar = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           
           <Navbar.Collapse id="basic-navbar-nav">
-            {/* Các link điều hướng ở giữa */}
             <Nav className="mx-auto fw-semibold">
               <Nav.Link as={Link} to="/clubs" className="px-3">CLB</Nav.Link>
               <Nav.Link as={Link} to="/events" className="px-3">Sự kiện</Nav.Link>
             </Nav>
 
-            {/* Profile / Đăng nhập ở bên phải */}
             <Nav className="align-items-center">
               {currentUser ? (
                 <NavDropdown
@@ -104,7 +96,6 @@ const HeaderNavbar = () => {
                     <FaKey className="me-2 text-warning" /> Đổi mật khẩu
                   </NavDropdown.Item>
                   
-                  {/* Dashboard chỉ hiện cho PDP hoặc Chủ nhiệm CLB (admin cũng có thể vào) */}
                   {(currentUser.role === 'pdp' || currentUser.role === 'admin' || (currentUser.role === 'student' && currentUser.isPresident)) && (
                     <NavDropdown.Item onClick={() => navigate(getDashboardPath())}>
                       <FaChartLine className="me-2 text-success" /> Dashboard
@@ -126,7 +117,6 @@ const HeaderNavbar = () => {
         </Container>
       </Navbar>
 
-      {/* Modal Profile */}
       <Modal show={showProfile} onHide={() => setShowProfile(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title className="fw-bold">Thông tin cá nhân</Modal.Title>
@@ -163,7 +153,6 @@ const HeaderNavbar = () => {
         </Modal.Footer>
       </Modal>
 
-      {/* Modal Đổi mật khẩu */}
       <Modal show={showPasswordModal} onHide={() => setShowPasswordModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title className="fw-bold">Đổi mật khẩu</Modal.Title>

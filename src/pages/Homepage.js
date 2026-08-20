@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Carousel, Card, Button, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaCalendarAlt, FaMapMarkerAlt, FaExternalLinkAlt, FaRegClock, FaArrowRight } from 'react-icons/fa';
+import { clubService, eventService, newsService } from '../services/api';
 
 const Homepage = () => {
   const [clubs, setClubs] = useState([]);
@@ -12,18 +13,12 @@ const Homepage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch clubs, approved events, and approved news
-        const [clubsRes, eventsRes, newsRes] = await Promise.all([
-          fetch('http://localhost:5000/clubs'),
-          fetch('http://localhost:5000/events?status=approved&_limit=3'),
-          fetch('http://localhost:5000/news?status=approved&_limit=3')
+        const [clubsData, eventsData, newsData] = await Promise.all([
+          clubService.getAll(),
+          eventService.getAllApproved(3),
+          newsService.getAllApproved(3)
         ]);
 
-        const clubsData = await clubsRes.json();
-        const eventsData = await eventsRes.json();
-        const newsData = await newsRes.json();
-
-        // Take a subset of clubs for preview (e.g., 4 clubs)
         setClubs(clubsData.slice(0, 4));
         setEvents(eventsData);
         setNews(newsData);
@@ -51,7 +46,6 @@ const Homepage = () => {
 
   return (
     <div className="homepage-wrapper d-flex flex-column min-vh-100 bg-light">
-      {/* 1. Banner to đùng sử dụng React Bootstrap Carousel */}
       <section className="banner-section">
         <Carousel fade interval={5000} className="shadow-sm">
           <Carousel.Item style={{ height: '400px' }}>
@@ -88,7 +82,6 @@ const Homepage = () => {
         </Carousel>
       </section>
 
-      {/* Phần Nội Dung */}
       <Container className="py-5">
         {loading ? (
           <div className="text-center py-5">
@@ -99,7 +92,6 @@ const Homepage = () => {
           </div>
         ) : (
           <>
-            {/* 2. Phần hiển thị CLB (Câu lạc bộ nổi bật) */}
             <section className="clubs-section mb-5">
               <div className="d-flex justify-content-between align-items-center mb-4">
                 <div>
@@ -132,7 +124,6 @@ const Homepage = () => {
               </Row>
             </section>
 
-            {/* 3. Phần hiển thị Sự kiện (Đã được duyệt) */}
             <section className="events-section mb-5">
               <div className="d-flex justify-content-between align-items-center mb-4">
                 <div>
@@ -203,7 +194,6 @@ const Homepage = () => {
               )}
             </section>
 
-            {/* 4. Phần hiển thị Tin tức (Đã được duyệt) */}
             <section className="news-section mb-3">
               <div className="d-flex justify-content-between align-items-center mb-4">
                 <div>

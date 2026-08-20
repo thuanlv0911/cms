@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Tabs, Tab, Badge, Table, Button } from 'react-bootstrap';
 import { useParams, Link } from 'react-router-dom';
 import { FaCalendarAlt, FaMapMarkerAlt, FaExternalLinkAlt, FaUserCircle } from 'react-icons/fa';
+import { clubService, eventService, newsService } from '../../services/api';
 
 const ClubDetail = () => {
   const { id } = useParams();
@@ -14,20 +15,17 @@ const ClubDetail = () => {
   useEffect(() => {
     const fetchClubData = async () => {
       try {
-        const [clubRes, eventsRes, newsRes, membersRes] = await Promise.all([
-          fetch(`http://localhost:5000/clubs/${id}`),
-          fetch(`http://localhost:5000/events?clubId=${id}&status=approved`),
-          fetch(`http://localhost:5000/news?clubId=${id}&status=approved`),
-          fetch(`http://localhost:5000/club_members?clubId=${id}`)
+        const [clubData, eventsData, newsData, membersData] = await Promise.all([
+          clubService.getById(id),
+          eventService.getByClub(id).then(events => events.filter(e => e.status === 'approved')),
+          newsService.getByClub(id).then(news => news.filter(n => n.status === 'approved')),
+          clubService.getMembers(id)
         ]);
 
-        if (clubRes.ok) {
-          const clubData = await clubRes.json();
-          setClub(clubData);
-        }
-        setEvents(await eventsRes.json());
-        setNews(await newsRes.json());
-        setMembers(await membersRes.json());
+        setClub(clubData);
+        setEvents(eventsData);
+        setNews(newsData);
+        setMembers(membersData);
       } catch (error) {
         console.error('Lỗi khi tải thông tin CLB:', error);
       } finally {
@@ -71,7 +69,6 @@ const ClubDetail = () => {
 
   return (
     <Container className="py-5">
-      {/* Header CLB */}
       <Card className="border-0 shadow-sm mb-4 p-4">
         <Card.Body className="d-flex align-items-center flex-wrap gap-4">
           <div className="fs-1 bg-light p-3 rounded shadow-sm">{club.logo}</div>
@@ -83,9 +80,7 @@ const ClubDetail = () => {
         </Card.Body>
       </Card>
 
-      {/* Tabs nội dung */}
       <Tabs defaultActiveKey="news" id="club-detail-tabs" className="mb-4 fw-semibold">
-        {/* Tab 1: Tin tức */}
         <Tab eventKey="news" title={`Tin tức (${news.length})`}>
           {news.length === 0 ? (
             <div className="text-center py-5 bg-white rounded shadow-sm">
@@ -114,7 +109,6 @@ const ClubDetail = () => {
           )}
         </Tab>
 
-        {/* Tab 2: Sự kiện */}
         <Tab eventKey="events" title={`Sự kiện (${events.length})`}>
           {events.length === 0 ? (
             <div className="text-center py-5 bg-white rounded shadow-sm">
@@ -164,7 +158,6 @@ const ClubDetail = () => {
           )}
         </Tab>
 
-        {/* Tab 3: Thành viên */}
         <Tab eventKey="members" title={`Thành viên (${members.length})`}>
           <Card className="border-0 shadow-sm">
             <Card.Body className="p-0">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Tabs, Tab, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { clubService } from '../../services/api';
 
 const BrowseClubs = () => {
   const [clubs, setClubs] = useState([]);
@@ -8,8 +9,7 @@ const BrowseClubs = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/clubs')
-      .then((res) => res.json())
+    clubService.getAll()
       .then((data) => {
         setClubs(data);
         setLoading(false);
@@ -20,10 +20,8 @@ const BrowseClubs = () => {
       });
   }, []);
 
-  // Categories list
   const categories = ['Lĩnh vực khác', 'Thể thao', 'Học thuật', 'Nghệ thuật'];
 
-  // Filter clubs by name and category
   const getFilteredClubs = (category) => {
     return clubs.filter(
       (club) =>
@@ -39,7 +37,6 @@ const BrowseClubs = () => {
         <p className="text-muted">Nơi hội tụ các tài năng, rèn luyện thể chất và phát triển tư duy học thuật tại FPTU</p>
       </div>
 
-      {/* Tìm kiếm */}
       <Row className="justify-content-center mb-4">
         <Col md={6}>
           <Form.Control

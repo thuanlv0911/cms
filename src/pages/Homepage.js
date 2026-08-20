@@ -4,6 +4,19 @@ import { Link } from 'react-router-dom';
 import { FaCalendarAlt, FaMapMarkerAlt, FaExternalLinkAlt, FaRegClock, FaArrowRight } from 'react-icons/fa';
 import { clubService, eventService, newsService } from '../services/api';
 
+const BANNERS = [
+  {
+    image: '/images/banner_tetdangian.jpg',
+    title: 'Chào mừng đến với FPTU CLB!',
+    description: 'Nơi kết nối đam mê, phát triển kỹ năng và lưu giữ những kỷ niệm sinh viên tuyệt đẹp.'
+  },
+  {
+    image: '/images/banner2.jpg',
+    title: 'Sự kiện & Hoạt động hấp dẫn',
+    description: 'Đừng bỏ lỡ các giải đấu kịch tính, workshop công nghệ và những đêm nhạc acoustic đỉnh cao.'
+  }
+];
+
 const Homepage = () => {
   const [clubs, setClubs] = useState([]);
   const [events, setEvents] = useState([]);
@@ -48,37 +61,23 @@ const Homepage = () => {
     <div className="homepage-wrapper d-flex flex-column min-vh-100 bg-light">
       <section className="banner-section">
         <Carousel fade interval={5000} className="shadow-sm">
-          <Carousel.Item style={{ height: '400px' }}>
-            <img
-              className="d-block w-100 h-100 object-fit-cover"
-              src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600&auto=format&fit=crop&q=80"
-              alt="FPTU Club Hub"
-              style={{ filter: 'brightness(60%)' }}
-            />
-            <Carousel.Caption className="text-start pb-5">
-              <h1 className="display-4 fw-bold text-white mb-2">Chào mừng đến với FPTU CLB!</h1>
-              <p className="fs-5 text-light mb-4">Nơi kết nối đam mê, phát triển kỹ năng và lưu giữ những kỷ niệm sinh viên tuyệt đẹp.</p>
-              <Button as={Link} to="/clubs" variant="warning" className="fw-semibold px-4 py-2 text-dark rounded-pill">
-                Khám phá các CLB ngay
-              </Button>
-            </Carousel.Caption>
-          </Carousel.Item>
-          
-          <Carousel.Item style={{ height: '400px' }}>
-            <img
-              className="d-block w-100 h-100 object-fit-cover"
-              src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1600&auto=format&fit=crop&q=80"
-              alt="Sự kiện sôi động"
-              style={{ filter: 'brightness(60%)' }}
-            />
-            <Carousel.Caption className="text-start pb-5">
-              <h1 className="display-4 fw-bold text-white mb-2">Sự kiện & Hoạt động hấp dẫn</h1>
-              <p className="fs-5 text-light mb-4">Đừng bỏ lỡ các giải đấu kịch tính, workshop công nghệ và những đêm nhạc acoustic đỉnh cao.</p>
-              <Button as={Link} to="/events" variant="primary" className="fw-semibold px-4 py-2 rounded-pill">
-                Xem lịch sự kiện
-              </Button>
-            </Carousel.Caption>
-          </Carousel.Item>
+          {BANNERS.map((banner, index) => (
+            <Carousel.Item key={index} style={{ height: '400px' }}>
+              <img
+                className="d-block w-100 h-100 object-fit-cover"
+                src={banner.image}
+                alt={banner.title}
+                style={{ filter: 'brightness(60%)' }}
+              />
+              <Carousel.Caption className="text-start pb-5">
+                <h1 className="display-4 fw-bold text-white mb-2">{banner.title}</h1>
+                <p className="fs-5 text-light mb-4">{banner.description}</p>
+                <Button as={Link} to="/clubs" variant="warning" className="fw-semibold px-4 py-2 text-dark rounded-pill">
+                  Khám phá ngay
+                </Button>
+              </Carousel.Caption>
+            </Carousel.Item>
+          ))}
         </Carousel>
       </section>
 

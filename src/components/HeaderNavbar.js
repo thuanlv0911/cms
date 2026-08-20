@@ -64,9 +64,8 @@ const HeaderNavbar = () => {
     <>
       <Navbar bg="light" expand="lg" className="border-bottom sticky-top shadow-sm py-2">
         <Container>
-          <Navbar.Brand as={Link} to="/" className="fw-bold text-orange d-flex align-items-center">
-            <span className="fs-3 me-2">🍊</span>
-            <span className="d-none d-sm-inline text-dark">FPTU CLB</span>
+          <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
+            <img src="/images/logo_FPTU.svg" alt="Logo FPTU" height="40" />
           </Navbar.Brand>
           
           <Navbar.Toggle aria-controls="basic-navbar-nav" />

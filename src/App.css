@@ -1,38 +1,81 @@
-.App {
-  text-align: center;
+/* Custom App Styling */
+
+:root {
+  --fpt-orange: #f37021;
+  --fpt-orange-hover: #d65b12;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.text-orange {
+  color: var(--fpt-orange) !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.bg-orange {
+  background-color: var(--fpt-orange) !important;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* Hover effects for cards */
+.hover-shadow {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-.App-link {
-  color: #61dafb;
+.hover-shadow:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Navbar active styles */
+.navbar-nav .nav-link {
+  color: #555;
+  transition: color 0.15s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--fpt-orange);
+}
+
+/* Button enhancements */
+.btn-primary {
+  background-color: var(--fpt-orange) !important;
+  border-color: var(--fpt-orange) !important;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--fpt-orange-hover) !important;
+  border-color: var(--fpt-orange-hover) !important;
+}
+
+.btn-outline-primary {
+  color: var(--fpt-orange) !important;
+  border-color: var(--fpt-orange) !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--fpt-orange) !important;
+  color: #fff !important;
+}
+
+/* Custom Tabs style for FPT style */
+.custom-tabs .nav-link {
+  color: #495057;
+  border: none !important;
+  border-bottom: 3px solid transparent !important;
+  padding: 12px 20px;
+}
+
+.custom-tabs .nav-link.active {
+  color: var(--fpt-orange) !important;
+  border-bottom-color: var(--fpt-orange) !important;
+  background-color: transparent !important;
+}
+
+.custom-tabs .nav-link:hover {
+  border-bottom-color: #dee2e6 !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.object-fit-cover {
+  object-fit: cover;
 }

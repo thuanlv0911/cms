@@ -1,0 +1,279 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "username": "admin",
+      "password": "123",
+      "fullName": "Hệ thống Admin",
+      "email": "admin@fpt.edu.vn",
+      "role": "admin",
+      "clubId": null,
+      "isPresident": false
+    },
+    {
+      "id": "u2",
+      "username": "pdp",
+      "password": "123",
+      "fullName": "Phòng PDP Staff",
+      "email": "pdp@fpt.edu.vn",
+      "role": "pdp",
+      "clubId": null,
+      "isPresident": false
+    },
+    {
+      "id": "u3",
+      "username": "president1",
+      "password": "123",
+      "fullName": "Nguyễn Văn Chủ Nhiệm",
+      "email": "president.bg@fpt.edu.vn",
+      "role": "student",
+      "clubId": "c3",
+      "isPresident": true
+    },
+    {
+      "id": "u4",
+      "username": "student1",
+      "password": "123",
+      "fullName": "Trần Sinh Viên",
+      "email": "student1@fpt.edu.vn",
+      "role": "student",
+      "clubId": null,
+      "isPresident": false
+    },
+    {
+      "id": "u5",
+      "username": "student2",
+      "password": "123",
+      "fullName": "Phạm Thành Viên",
+      "email": "student2.bg@fpt.edu.vn",
+      "role": "student",
+      "clubId": "c3",
+      "isPresident": false
+    }
+  ],
+  "clubs": [
+    {
+      "id": "c1",
+      "name": "Color Team",
+      "category": "Lĩnh vực khác",
+      "description": "Nơi tập hợp những bạn trẻ đam mê hội họa, thiết kế và sắc màu sáng tạo tại FPTU.",
+      "logo": "🎨"
+    },
+    {
+      "id": "c2",
+      "name": "iGo club",
+      "category": "Lĩnh vực khác",
+      "description": "CLB tình nguyện xanh, mang ngọn lửa ấm áp và những hành động ý nghĩa tới cộng đồng.",
+      "logo": "💚"
+    },
+    {
+      "id": "c3",
+      "name": "FPTU BoardGame Club",
+      "category": "Lĩnh vực khác",
+      "description": "Không gian giải trí trí tuệ đỉnh cao với hàng trăm tựa game hấp dẫn từ chiến thuật đến ẩn vai.",
+      "logo": "🎲"
+    },
+    {
+      "id": "c4",
+      "name": "FPTU Basketball Club",
+      "category": "Thể thao",
+      "description": "Nơi chắp cánh đam mê trái bóng cam và rèn luyện thể chất dẻo dai khỏe mạnh.",
+      "logo": "🏀"
+    },
+    {
+      "id": "c5",
+      "name": "FPTU Football Club",
+      "category": "Thể thao",
+      "description": "CLB Bóng đá FPTU với tinh thần đồng đội bất diệt và ngọn lửa sân cỏ rực cháy.",
+      "logo": "⚽"
+    },
+    {
+      "id": "c6",
+      "name": "FPT University Volleyball CLUB",
+      "category": "Thể thao",
+      "description": "Đội bóng chuyền FPTU – Sức mạnh của sự gắn kết và những pha đập bóng uy lực.",
+      "logo": "🏐"
+    },
+    {
+      "id": "c7",
+      "name": "FPTU Vovinam Club - FVC Hòa Lạc",
+      "category": "Thể thao",
+      "description": "Học võ Việt, giữ hồn Việt. Nơi rèn luyện bản lĩnh tinh hoa võ thuật truyền thống.",
+      "logo": "🥋"
+    },
+    {
+      "id": "c8",
+      "name": "FMUC - FPTU Muay Club",
+      "category": "Thể thao",
+      "description": "Võ thuật đối kháng đỉnh cao, rèn luyện ý chí thép và kỹ năng tự vệ toàn diện.",
+      "logo": "🥊"
+    },
+    {
+      "id": "c9",
+      "name": "FPTU Business Club - FBC",
+      "category": "Học thuật",
+      "description": "Kết nối tư duy kinh doanh khởi nghiệp, chuẩn bị hành trang vững chắc cho tương lai.",
+      "logo": "💼"
+    },
+    {
+      "id": "c10",
+      "name": "FEC - FPTU English Club",
+      "category": "Học thuật",
+      "description": "Cộng đồng giao tiếp tiếng Anh năng động, giúp nâng tầm khả năng ngoại ngữ của bạn.",
+      "logo": "🗣️"
+    },
+    {
+      "id": "c11",
+      "name": "FPTU AI Club - Artificial Intelligence Researchers",
+      "category": "Học thuật",
+      "description": "Nơi nghiên cứu và làm chủ các công nghệ trí tuệ nhân tạo, học máy tiên tiến nhất.",
+      "logo": "🤖"
+    },
+    {
+      "id": "c12",
+      "name": "FPTU Robotics Club - FRC",
+      "category": "Học thuật",
+      "description": "Sáng tạo và lập trình robot điều khiển tự động, chuẩn bị cho các sân chơi công nghệ quốc tế.",
+      "logo": "⚙️"
+    },
+    {
+      "id": "c13",
+      "name": "FU Guitar club",
+      "category": "Nghệ thuật",
+      "description": "Những giai điệu acoustic mộc mạc kết nối tâm hồn nghệ sĩ tại FPTU Hòa Lạc.",
+      "logo": "🎸"
+    },
+    {
+      "id": "c14",
+      "name": "FPTU - Melody Club",
+      "category": "Nghệ thuật",
+      "description": "Nơi thăng hoa của những giọng ca vàng và các nhạc công tài năng.",
+      "logo": "🎤"
+    },
+    {
+      "id": "c15",
+      "name": "FPTU - Soleil Crew",
+      "category": "Nghệ thuật",
+      "description": "Nhóm nhảy hiện đại Soleil Crew – Năng lượng trẻ trung, vũ đạo bốc lửa.",
+      "logo": "💃"
+    }
+  ],
+  "club_members": [
+    {
+      "id": "m1",
+      "clubId": "c3",
+      "userId": "u3",
+      "fullName": "Nguyễn Văn Chủ Nhiệm",
+      "studentId": "HE150123",
+      "email": "president.bg@fpt.edu.vn",
+      "role": "Chủ nhiệm"
+    },
+    {
+      "id": "m2",
+      "clubId": "c3",
+      "userId": "u5",
+      "fullName": "Phạm Thành Viên",
+      "studentId": "HE150456",
+      "email": "student2.bg@fpt.edu.vn",
+      "role": "Thành viên"
+    },
+    {
+      "id": "m3",
+      "clubId": "c3",
+      "userId": "u4",
+      "fullName": "Trần Sinh Viên",
+      "studentId": "HE150789",
+      "email": "student1@fpt.edu.vn",
+      "role": "Thành viên"
+    }
+  ],
+  "events": [
+    {
+      "id": "e1",
+      "clubId": "c3",
+      "clubName": "FPTU BoardGame Club",
+      "title": "Giải đấu Ma Sói Mùa Thu 2026",
+      "description": "Giải đấu trí tuệ kịch tính dành cho tất cả các bạn học sinh yêu thích trò chơi Ma Sói. Tìm ra người sống sót cuối cùng và nhận giải thưởng cực khủng!",
+      "location": "Sảnh tòa Alpha",
+      "startDate": "2026-09-01T18:00",
+      "endDate": "2026-09-01T21:00",
+      "type": "Sự kiện trong trường",
+      "youtubeLink": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "registrationLink": "https://forms.gle/boardgameWerewolf2026",
+      "sendEmail": true,
+      "status": "approved",
+      "pdpFeedback": "Ý tưởng rất tốt, khuyến khích tổ chức.",
+      "hasReport": false,
+      "banner": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop"
+    },
+    {
+      "id": "e2",
+      "clubId": "c11",
+      "clubName": "FPTU AI Club - Artificial Intelligence Researchers",
+      "title": "Workshop: Ứng dụng Generative AI trong Học tập",
+      "description": "Tìm hiểu cách sử dụng ChatGPT, Claude và các mô hình ngôn ngữ lớn để tăng tốc hiệu suất học tập và viết mã nguồn hiệu quả hơn.",
+      "location": "Phòng Seminar tòa Beta",
+      "startDate": "2026-09-05T13:30",
+      "endDate": "2026-09-05T16:30",
+      "type": "Sự kiện trong trường",
+      "youtubeLink": "",
+      "registrationLink": "https://forms.gle/aiWorkshop2026",
+      "sendEmail": false,
+      "status": "approved",
+      "pdpFeedback": "Duyệt. Rất thiết thực cho sinh viên IT.",
+      "hasReport": false,
+      "banner": "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&auto=format&fit=crop"
+    },
+    {
+      "id": "e3",
+      "clubId": "c3",
+      "clubName": "FPTU BoardGame Club",
+      "title": "Đêm Trải Nghiệm Cờ Tỷ Phú - Monopoly Night",
+      "description": "Giao lưu, làm quen và thử tài quản lý tài chính kinh doanh thông qua bàn cờ Monopoly huyền thoại.",
+      "location": "Sảnh tòa Delta",
+      "startDate": "2026-09-10T19:00",
+      "endDate": "2026-09-10T22:00",
+      "type": "Sự kiện trong trường",
+      "youtubeLink": "",
+      "registrationLink": "https://forms.gle/boardgameMonopoly",
+      "sendEmail": false,
+      "status": "pending",
+      "pdpFeedback": "",
+      "hasReport": false,
+      "banner": "https://images.unsplash.com/photo-1606167668584-78701c57f13d?w=800&auto=format&fit=crop"
+    }
+  ],
+  "news": [
+    {
+      "id": "n1",
+      "clubId": "c3",
+      "clubName": "FPTU BoardGame Club",
+      "title": "Thông báo Tuyển Thành Viên Thế Hệ Mới Mùa Thu 2026",
+      "content": "Chào đón học kỳ mới đầy năng động! FPTU BoardGame Club chính thức mở đơn đăng ký ứng tuyển thành viên mới cho các ban: Truyền thông, Sự kiện, Hậu cần và Chuyên môn. Hãy nhanh tay nộp đơn để tham gia vào đại gia đình vui vẻ này nhé!",
+      "createdAt": "2026-08-20T10:00:00Z",
+      "status": "approved",
+      "pdpFeedback": "Nội dung tốt, duyệt đăng tin tuyển thành viên."
+    },
+    {
+      "id": "n2",
+      "clubId": "c10",
+      "clubName": "FEC - FPTU English Club",
+      "title": "Khai giảng Câu lạc bộ Tiếng Anh đàm thoại định kỳ tuần này",
+      "content": "Lịch sinh hoạt thường niên của CLB Tiếng Anh (FEC) sẽ diễn ra vào lúc 18h00 tối thứ Năm hàng tuần tại phòng 102 tòa Alpha. Rất hân hạnh chào đón các bạn sinh viên tới luyện nói tiếng Anh miễn phí và tự nhiên.",
+      "createdAt": "2026-08-19T08:30:00Z",
+      "status": "approved",
+      "pdpFeedback": "Duyệt."
+    },
+    {
+      "id": "n3",
+      "clubId": "c3",
+      "clubName": "FPTU BoardGame Club",
+      "title": "Cập nhật nội quy phòng sinh hoạt CLB từ kỳ Fall 2026",
+      "content": "Nhằm giữ gìn không gian chung sạch đẹp và bảo quản tốt các bộ BoardGame của CLB, Ban chủ nhiệm yêu cầu tất cả các thành viên thực hiện nghiêm túc việc dọn dẹp vệ sinh sau khi chơi và không mang đồ uống có màu vào phòng sinh hoạt.",
+      "createdAt": "2026-08-20T15:00:00Z",
+      "status": "pending",
+      "pdpFeedback": ""
+    }
+  ],
+  "reports": []
+}

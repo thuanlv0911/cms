@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Tabs, Tab, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Container, Row, Col, Form, Tabs, Tab } from 'react-bootstrap';
 import { clubService } from '../../services/api';
+import ClubCard from '../../components/ClubCard';
 
-const BrowseClubs = () => {
+const ClubList = () => {
   const [clubs, setClubs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
@@ -69,18 +69,7 @@ const BrowseClubs = () => {
                   ) : (
                     filtered.map((club) => (
                       <Col key={club.id}>
-                        <Card className="h-100 border-0 shadow-sm p-4 hover-shadow transition">
-                          <Card.Body className="d-flex flex-column p-0">
-                            <div className="fs-1 mb-3">{club.logo}</div>
-                            <Card.Title className="fw-bold fs-5 mb-2">{club.name}</Card.Title>
-                            <Card.Text className="text-muted small flex-grow-1">
-                              {club.description}
-                            </Card.Text>
-                            <Button as={Link} to={`/clubs/${club.id}`} variant="outline-primary" className="mt-4 rounded-pill w-100 fw-semibold">
-                              Xem chi tiết
-                            </Button>
-                          </Card.Body>
-                        </Card>
+                        <ClubCard club={club} truncate={false} />
                       </Col>
                     ))
                   )}
@@ -94,4 +83,4 @@ const BrowseClubs = () => {
   );
 };
 
-export default BrowseClubs;
+export default ClubList;

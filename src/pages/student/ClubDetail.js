@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Tabs, Tab, Badge, Table, Button } from 'react-bootstrap';
 import { useParams, Link } from 'react-router-dom';
-import { FaCalendarAlt, FaMapMarkerAlt, FaExternalLinkAlt, FaUserCircle } from 'react-icons/fa';
+import { FaUserCircle } from 'react-icons/fa';
 import { clubService, eventService, newsService } from '../../services/api';
+import EventCard from '../../components/EventCard';
+import NewsCard from '../../components/NewsCard';
 
 const ClubDetail = () => {
   const { id } = useParams();
@@ -35,18 +37,6 @@ const ClubDetail = () => {
 
     fetchClubData();
   }, [id]);
-
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleString('vi-VN', {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
 
   if (loading) {
     return (
@@ -90,19 +80,7 @@ const ClubDetail = () => {
             <Row xs={1} md={2} className="g-4 mt-2">
               {news.map((item) => (
                 <Col key={item.id}>
-                  <Card className="h-100 border-0 shadow-sm p-4">
-                    <Card.Body className="d-flex flex-column p-0">
-                      <div className="d-flex justify-content-between align-items-center mb-3">
-                        <span className="text-muted small">
-                          Ngày đăng: {new Date(item.createdAt).toLocaleDateString('vi-VN')}
-                        </span>
-                      </div>
-                      <Card.Title className="fw-bold fs-5 mb-3">{item.title}</Card.Title>
-                      <Card.Text className="text-muted small flex-grow-1">
-                        {item.content}
-                      </Card.Text>
-                    </Card.Body>
-                  </Card>
+                  <NewsCard news={item} truncate={false} buttonStyle="none" />
                 </Col>
               ))}
             </Row>
@@ -118,40 +96,7 @@ const ClubDetail = () => {
             <Row xs={1} md={2} className="g-4 mt-2">
               {events.map((event) => (
                 <Col key={event.id}>
-                  <Card className="h-100 border-0 shadow-sm overflow-hidden">
-                    <div style={{ height: '180px', overflow: 'hidden' }}>
-                      <img
-                        src={event.banner || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop'}
-                        alt={event.title}
-                        className="w-100 h-100 object-fit-cover"
-                      />
-                    </div>
-                    <Card.Body className="d-flex flex-column p-4">
-                      <Card.Title className="fw-bold fs-5 mb-3">{event.title}</Card.Title>
-                      <div className="text-muted small mb-2 d-flex align-items-center">
-                        <FaCalendarAlt className="me-2 text-primary" />
-                        {formatDate(event.startDate)} - {formatDate(event.endDate)}
-                      </div>
-                      <div className="text-muted small mb-3 d-flex align-items-center">
-                        <FaMapMarkerAlt className="me-2 text-danger" />
-                        {event.location}
-                      </div>
-                      <Card.Text className="text-muted small flex-grow-1">
-                        {event.description}
-                      </Card.Text>
-                      {event.registrationLink && (
-                        <Button
-                          href={event.registrationLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          variant="warning"
-                          className="mt-4 w-100 fw-semibold text-dark d-flex align-items-center justify-content-center btn-sm"
-                        >
-                          Đăng ký tham gia <FaExternalLinkAlt className="ms-2" size={12} />
-                        </Button>
-                      )}
-                    </Card.Body>
-                  </Card>
+                  <EventCard event={event} truncate={false} showDetailButton={false} />
                 </Col>
               ))}
             </Row>

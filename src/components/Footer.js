@@ -18,7 +18,7 @@ const Footer = () => {
           </Col>
 
           <Col md={3} className="ms-md-auto">
-            <h5 className="fw-bold mb-3 text-orange">Liên kết nhanh</h5>
+            <h5 className="fw-bold mb-3 text-orange">Chi tiết</h5>
             <ul className="list-unstyled">
               <li className="mb-2">
                 <Link to="/clubs" className="text-decoration-none text-secondary hover-text-orange small">
@@ -39,7 +39,7 @@ const Footer = () => {
           </Col>
 
           <Col md={4}>
-            <h5 className="fw-bold mb-3 text-orange">Liên hệ bộ phận PDP</h5>
+            <h5 className="fw-bold mb-3 text-orange">Liên hệ PDP</h5>
             <ul className="list-unstyled text-muted small">
               <li className="mb-2 d-flex align-items-start">
                 <FaMapMarkerAlt className="me-2 mt-1 text-orange" />

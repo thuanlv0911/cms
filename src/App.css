@@ -117,3 +117,8 @@
   position: relative;
   z-index: 20;
 }
+
+.navbar-light-orange {
+  background-color: #fffaf5 !important;
+  border-bottom: 3px solid var(--fpt-orange) !important;
+}

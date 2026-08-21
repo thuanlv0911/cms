@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Badge, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { FaRegClock } from 'react-icons/fa';
+import { Container, Row, Col, Form } from 'react-bootstrap';
 import { newsService } from '../../services/api';
+import NewsCard from '../../components/NewsCard';
 
 const NewsList = () => {
   const [news, setNews] = useState([]);
@@ -59,29 +58,7 @@ const NewsList = () => {
         <Row xs={1} md={2} lg={3} className="g-4">
           {filteredNews.map((item) => (
             <Col key={item.id}>
-              <Card className="h-100 border-0 shadow-sm p-4 hover-shadow transition d-flex flex-column">
-                <Card.Body className="d-flex flex-column p-0">
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <Badge bg="secondary" className="px-2 py-1">{item.clubName}</Badge>
-                    <span className="text-muted small d-flex align-items-center">
-                      <FaRegClock className="me-1" size={12} />
-                      {new Date(item.createdAt).toLocaleDateString('vi-VN')}
-                    </span>
-                  </div>
-                  <Card.Title className="fw-bold fs-5 mb-3 text-dark">{item.title}</Card.Title>
-                  <Card.Text className="text-muted small flex-grow-1">
-                    {item.content.length > 180 ? `${item.content.substring(0, 180)}...` : item.content}
-                  </Card.Text>
-                  <Button 
-                    as={Link}
-                    to={`/news/${item.id}`}
-                    variant="outline-primary" 
-                    className="mt-4 w-100 rounded-pill btn-sm fw-semibold"
-                  >
-                    Xem chi tiết
-                  </Button>
-                </Card.Body>
-              </Card>
+              <NewsCard news={item} truncate={true} buttonStyle="outline" />
             </Col>
           ))}
         </Row>

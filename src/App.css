@@ -83,3 +83,12 @@
 .user-dropdown-no-caret .dropdown-toggle::after {
   display: none !important;
 }
+
+.bg-light-orange {
+  background-color: #fffaf5 !important;
+  border-top: 3px solid var(--fpt-orange);
+}
+
+.hover-text-orange:hover {
+  color: var(--fpt-orange) !important;
+}

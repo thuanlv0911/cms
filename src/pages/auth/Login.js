@@ -8,7 +8,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { login, currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -48,9 +48,7 @@ const Login = () => {
           <Card className="border-0 shadow-lg p-4">
             <Card.Body>
               <div className="text-center mb-4">
-                <span className="fs-1">🍊</span>
-                <h3 className="fw-bold mt-2">Đăng Nhập Hệ Thống</h3>
-                <p className="text-muted small">Cổng thông tin quản lý Câu lạc bộ FPTU</p>
+                <h3 className="fw-bold mt-2">Đăng Nhập</h3>
               </div>
 
               {error && <Alert variant="danger">{error}</Alert>}
@@ -58,9 +56,9 @@ const Login = () => {
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formBasicUsername">
                   <Form.Label className="fw-semibold">Tên đăng nhập</Form.Label>
-                  <Form.Control 
-                    type="text" 
-                    placeholder="Nhập tên đăng nhập (VD: admin, pdp, president1...)" 
+                  <Form.Control
+                    type="text"
+                    placeholder="Nhập tên đăng nhập (VD: admin, pdp, president1...)"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
@@ -69,25 +67,25 @@ const Login = () => {
 
                 <Form.Group className="mb-4" controlId="formBasicPassword">
                   <Form.Label className="fw-semibold">Mật khẩu</Form.Label>
-                  <Form.Control 
-                    type="password" 
-                    placeholder="Nhập mật khẩu" 
+                  <Form.Control
+                    type="password"
+                    placeholder="Nhập mật khẩu"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </Form.Group>
 
-                <Button 
-                  variant="primary" 
-                  type="submit" 
+                <Button
+                  variant="primary"
+                  type="submit"
                   className="w-100 py-2 fw-semibold rounded-pill"
                   disabled={loading}
                 >
                   {loading ? 'Đang xác thực...' : 'Đăng Nhập'}
                 </Button>
               </Form>
-              
+
               <div className="mt-4 pt-3 border-top text-center text-muted small">
                 <p className="mb-1"><strong>Tài khoản Demo gợi ý:</strong></p>
                 <div className="text-start bg-light p-2 rounded">

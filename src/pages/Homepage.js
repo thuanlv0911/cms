@@ -7,12 +7,12 @@ import { clubService, eventService, newsService } from '../services/api';
 const BANNERS = [
   {
     image: '/images/banner_tetdangian.jpg',
-    title: 'Chào mừng đến với FPTU CLB!',
+    title: 'WELCOME TO FPTU CLUB!',
     description: 'Nơi kết nối đam mê, phát triển kỹ năng và lưu giữ những kỷ niệm sinh viên tuyệt đẹp.'
   },
   {
     image: '/images/banner2.jpg',
-    title: 'Sự kiện & Hoạt động hấp dẫn',
+    title: 'Sự kiện & Hoạt động',
     description: 'Đừng bỏ lỡ các giải đấu kịch tính, workshop công nghệ và những đêm nhạc acoustic đỉnh cao.'
   }
 ];
@@ -62,7 +62,7 @@ const Homepage = () => {
       <section className="banner-section">
         <Carousel fade interval={5000} className="shadow-sm">
           {BANNERS.map((banner, index) => (
-            <Carousel.Item key={index} style={{ height: '540px' }}>
+            <Carousel.Item key={index} style={{ height: '600px' }}>
               <img
                 className="d-block w-100 h-100 object-fit-cover"
                 src={banner.image}

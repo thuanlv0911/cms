@@ -5,7 +5,7 @@ import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 
 const Footer = () => {
   return (
-    <footer className="bg-light-orange text-dark py-5 mt-auto">
+    <footer className="bg-light-orange text-dark py-2 pt-4 mt-auto">
       <Container>
         <Row className="g-4">
           <Col md={5}>
@@ -13,7 +13,7 @@ const Footer = () => {
               <img src="/images/logo_FPTU.svg" alt="Logo FPTU" height="35" className="me-2" />
             </div>
             <p className="text-muted small">
-              Hệ thống Quản lý Câu lạc bộ FPT University (FPTU CMS) là nền tảng kết nối hoạt động, hỗ trợ quản trị, cộng tác thông tin hiệu quả giữa Phòng Công tác sinh viên (PDP) và Ban chủ nhiệm các câu lạc bộ tại trường.
+              Hệ thống Quản lý Câu lạc bộ FPT University (FPTU CMS) là nền tảng kết nối hoạt động, hỗ trợ quản trị, cộng tác thông tin hiệu quả giữa bộ phận PDP - Chương trình Phát triển Cá nhân FPTU Hà Nội và Ban chủ nhiệm các câu lạc bộ tại trường.
             </p>
           </Col>
 
@@ -43,25 +43,19 @@ const Footer = () => {
             <ul className="list-unstyled text-muted small">
               <li className="mb-2 d-flex align-items-start">
                 <FaMapMarkerAlt className="me-2 mt-1 text-orange" />
-                <span>Phòng Công tác sinh viên (PDP), Tòa Alpha, Khu công nghệ cao Hòa Lạc, Thạch Thất, Hà Nội</span>
+                <span>Khu Giáo dục và Đào tạo - Khu Công nghệ cao Hòa Lạc - Km29 Đại lộ Thăng Long, Xã Hòa Lạc, TP. Hà Nội</span>
               </li>
               <li className="mb-2 d-flex align-items-center">
                 <FaEnvelope className="me-2 text-orange" />
-                <span>pdp.hl@fpt.edu.vn</span>
+                <span>pdp.hn@fpt.edu.vn</span>
               </li>
               <li className="mb-0 d-flex align-items-center">
                 <FaPhoneAlt className="me-2 text-orange" />
-                <span>(024) 7300 1866</span>
+                <span>024 6680 5910</span>
               </li>
             </ul>
           </Col>
         </Row>
-
-        <hr className="my-4 border-secondary opacity-25" />
-
-        <div className="text-center text-muted small">
-          <p className="mb-0">&copy; {new Date().getFullYear()} FPT University. Bản quyền thuộc về phòng Công tác sinh viên PDP.</p>
-        </div>
       </Container>
     </footer>
   );

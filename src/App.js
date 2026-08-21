@@ -11,6 +11,7 @@ import EventCalendar from './pages/student/EventCalendar';
 import NewsList from './pages/student/NewsList';
 import NewsDetail from './pages/student/NewsDetail';
 import Profile from './pages/Profile';
+import Contact from './pages/Contact';
 import Unauthorized from './pages/auth/Unauthorized';
 import './App.css';
 
@@ -31,6 +32,7 @@ function App() {
               <Route path="/news" element={<NewsList />} />
               <Route path="/news/:id" element={<NewsDetail />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
               <Route path="*" element={<Homepage />} />
             </Routes>

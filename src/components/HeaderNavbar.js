@@ -35,7 +35,7 @@ const HeaderNavbar = () => {
             <Nav.Link as={Link} to="/clubs" className="px-3">CLB</Nav.Link>
             <Nav.Link as={Link} to="/events" className="px-3">Sự kiện</Nav.Link>
             <Nav.Link as={Link} to="/news" className="px-3">Tin tức</Nav.Link>
-            <Nav.Link as={Link} to="#" className="px-3">Liên hệ</Nav.Link>
+            <Nav.Link as={Link} to="/contact" className="px-3">Liên hệ</Nav.Link>
           </Nav>
 
           <Nav className="align-items-center">

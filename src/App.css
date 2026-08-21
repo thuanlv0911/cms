@@ -79,3 +79,7 @@
 .object-fit-cover {
   object-fit: cover;
 }
+
+.user-dropdown-no-caret .dropdown-toggle::after {
+  display: none !important;
+}

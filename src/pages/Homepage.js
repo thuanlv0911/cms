@@ -62,7 +62,7 @@ const Homepage = () => {
       <section className="banner-section">
         <Carousel fade interval={5000} className="shadow-sm">
           {BANNERS.map((banner, index) => (
-            <Carousel.Item key={index} style={{ height: '400px' }}>
+            <Carousel.Item key={index} style={{ height: '540px' }}>
               <img
                 className="d-block w-100 h-100 object-fit-cover"
                 src={banner.image}
@@ -101,7 +101,7 @@ const Homepage = () => {
                   Xem tất cả CLB <FaArrowRight className="ms-1" size={14} />
                 </Button>
               </div>
-              
+
               <Row xs={1} md={2} lg={4} className="g-4">
                 {clubs.map((club) => (
                   <Col key={club.id}>
@@ -155,7 +155,7 @@ const Homepage = () => {
                         <Card.Body className="d-flex flex-column p-4">
                           <Badge bg="info" className="align-self-start mb-2 px-2 py-1 text-dark fw-semibold">{event.clubName}</Badge>
                           <Card.Title className="fw-bold fs-5 mb-3">{event.title}</Card.Title>
-                          
+
                           <div className="text-muted small mb-2 d-flex align-items-center">
                             <FaCalendarAlt className="me-2 text-primary" />
                             {formatDate(event.startDate)}
@@ -164,11 +164,11 @@ const Homepage = () => {
                             <FaMapMarkerAlt className="me-2 text-danger" />
                             {event.location}
                           </div>
-                          
+
                           <Card.Text className="text-muted small flex-grow-1 mb-4">
                             {event.description.length > 120 ? `${event.description.substring(0, 120)}...` : event.description}
                           </Card.Text>
-                          
+
                           <div className="mt-auto d-flex gap-2">
                             <Button as={Link} to={`/events/${event.id}`} variant="light" className="flex-fill fw-semibold btn-sm">
                               Chi tiết

@@ -8,6 +8,8 @@ import Login from './pages/auth/Login';
 import BrowseClubs from './pages/student/BrowseClubs';
 import ClubDetail from './pages/student/ClubDetail';
 import EventCalendar from './pages/student/EventCalendar';
+import NewsList from './pages/student/NewsList';
+import NewsDetail from './pages/student/NewsDetail';
 import Unauthorized from './pages/auth/Unauthorized';
 import './App.css';
 
@@ -25,6 +27,8 @@ function App() {
               <Route path="/clubs" element={<BrowseClubs />} />
               <Route path="/clubs/:id" element={<ClubDetail />} />
               <Route path="/events" element={<EventCalendar />} />
+              <Route path="/news" element={<NewsList />} />
+              <Route path="/news/:id" element={<NewsDetail />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
               <Route path="*" element={<Homepage />} />
             </Routes>

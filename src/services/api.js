@@ -140,6 +140,11 @@ export const newsService = {
     return handleResponse(response);
   },
 
+  getById: async (id) => {
+    const response = await fetch(`${BASE_URL}/news/${id}`);
+    return handleResponse(response);
+  },
+
   getByClub: async (clubId) => {
     const response = await fetch(`${BASE_URL}/news?clubId=${clubId}`);
     return handleResponse(response);

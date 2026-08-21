@@ -22,7 +22,7 @@ const HeaderNavbar = () => {
   };
 
   return (
-    <Navbar bg="light" expand="lg" className="border-bottom sticky-top shadow-sm py-2">
+    <Navbar expand="lg" className="navbar-light-orange sticky-top shadow-sm py-2">
       <Container>
         <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
           <img src="/images/logo_FPTU.svg" alt="Logo FPTU" height="40" />

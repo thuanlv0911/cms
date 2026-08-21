@@ -5,9 +5,10 @@ import HeaderNavbar from './components/HeaderNavbar';
 import Footer from './components/Footer';
 import Homepage from './pages/Homepage';
 import Login from './pages/auth/Login';
-import BrowseClubs from './pages/student/BrowseClubs';
+import ClubList from './pages/student/ClubList';
 import ClubDetail from './pages/student/ClubDetail';
-import EventCalendar from './pages/student/EventCalendar';
+import EventList from './pages/student/EventList';
+import EventDetail from './pages/student/EventDetail';
 import NewsList from './pages/student/NewsList';
 import NewsDetail from './pages/student/NewsDetail';
 import Profile from './pages/Profile';
@@ -26,9 +27,10 @@ function App() {
             <Routes>
               <Route path="/" element={<Homepage />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/clubs" element={<BrowseClubs />} />
+              <Route path="/clubs" element={<ClubList />} />
               <Route path="/clubs/:id" element={<ClubDetail />} />
-              <Route path="/events" element={<EventCalendar />} />
+              <Route path="/events" element={<EventList />} />
+              <Route path="/events/:id" element={<EventDetail />} />
               <Route path="/news" element={<NewsList />} />
               <Route path="/news/:id" element={<NewsDetail />} />
               <Route path="/profile" element={<Profile />} />

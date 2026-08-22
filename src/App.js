@@ -16,6 +16,8 @@ import Contact from './pages/Contact';
 import Unauthorized from './pages/auth/Unauthorized';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PdpDashboard from './pages/pdp/PdpDashboard';
+// eslint-disable-next-line no-unused-vars
+import PresidentDashboard from './pages/president/PresidentDashboard';
 import './App.css';
 
 const UserLayout = () => {
@@ -52,6 +54,7 @@ function App() {
 
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/pdp" element={<PdpDashboard />} />
+          <Route path="/president" element={<PresidentDashboard />} />
         </Routes>
       </Router>
     </AuthProvider>

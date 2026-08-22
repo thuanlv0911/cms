@@ -18,6 +18,8 @@ const Login = () => {
         navigate('/admin');
       } else if (currentUser.role === 'pdp') {
         navigate('/pdp');
+      } else if (currentUser.role === 'student' && currentUser.isPresident) {
+        navigate('/president');
       } else {
         navigate('/');
       }
@@ -38,7 +40,7 @@ const Login = () => {
       } else if (res.user.role === 'pdp') {
         navigate('/pdp');
       } else if (res.user.role === 'student' && res.user.isPresident) {
-        navigate('/president/events');
+        navigate('/president');
       } else {
         navigate('/');
       }

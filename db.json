@@ -356,7 +356,29 @@
       "status": "approved",
       "pdpFeedback": "Ý tưởng rất tốt, khuyến khích tổ chức.",
       "hasReport": false,
-      "banner": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop"
+      "banner": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop",
+      "agenda": [
+        {
+          "id": "ag1",
+          "time": "2026-09-01T18:00",
+          "content": "Check-in đón tiếp người tham gia giải đấu"
+        },
+        {
+          "id": "ag2",
+          "time": "2026-09-01T18:30",
+          "content": "Khai mạc, phổ biến luật chơi giải đấu Ma Sói"
+        },
+        {
+          "id": "ag3",
+          "time": "2026-09-01T19:00",
+          "content": "Bắt đầu vòng đấu loại chính thức"
+        },
+        {
+          "id": "ag4",
+          "time": "2026-09-01T20:30",
+          "content": "Vòng chung kết và trao giải"
+        }
+      ]
     },
     {
       "id": "e2",
@@ -374,7 +396,29 @@
       "status": "approved",
       "pdpFeedback": "Duyệt. Rất thiết thực cho sinh viên IT.",
       "hasReport": false,
-      "banner": "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&auto=format&fit=crop"
+      "banner": "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&auto=format&fit=crop",
+      "agenda": [
+        {
+          "id": "ag5",
+          "time": "2026-09-05T13:30",
+          "content": "Đón khách và ổn định chỗ ngồi tại phòng Seminar"
+        },
+        {
+          "id": "ag6",
+          "time": "2026-09-05T14:00",
+          "content": "Giới thiệu tổng quan về Generative AI"
+        },
+        {
+          "id": "ag7",
+          "time": "2026-09-05T15:00",
+          "content": "Demo thực hành viết Code & làm tiểu luận với AI"
+        },
+        {
+          "id": "ag8",
+          "time": "2026-09-05T16:00",
+          "content": "Q&A và bế mạc workshop"
+        }
+      ]
     },
     {
       "id": "e3",

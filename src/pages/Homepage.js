@@ -139,7 +139,7 @@ const Homepage = () => {
                 <Row xs={1} md={2} lg={3} className="g-4">
                   {events.map((event) => (
                     <Col key={event.id}>
-                      <EventCard event={event} truncate={true} showDetailButton={true} />
+                      <EventCard event={event} truncate={true} showDetailButton={false} />
                     </Col>
                   ))}
                 </Row>

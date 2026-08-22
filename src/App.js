@@ -15,6 +15,7 @@ import Profile from './pages/Profile';
 import Contact from './pages/Contact';
 import Unauthorized from './pages/auth/Unauthorized';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import PdpDashboard from './pages/pdp/PdpDashboard';
 import './App.css';
 
 const UserLayout = () => {
@@ -50,6 +51,7 @@ function App() {
           </Route>
 
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/pdp" element={<PdpDashboard />} />
         </Routes>
       </Router>
     </AuthProvider>

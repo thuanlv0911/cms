@@ -8,6 +8,31 @@ const handleResponse = async (response) => {
   return response.json();
 };
 
+const getActiveSemesterName = async () => {
+  try {
+    const semestersResponse = await fetch(`${BASE_URL}/semesters`);
+    if (!semestersResponse.ok) return null;
+    const semesters = await semestersResponse.json();
+    
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const activeSem = semesters.find(sem => {
+      if (!sem.startDate || !sem.endDate) return false;
+      const [startDay, startMonth, startYear] = sem.startDate.split('/').map(Number);
+      const [endDay, endMonth, endYear] = sem.endDate.split('/').map(Number);
+      const start = new Date(startYear, startMonth - 1, startDay);
+      const end = new Date(endYear, endMonth - 1, endDay);
+      return today >= start && today <= end;
+    });
+
+    return activeSem ? activeSem.name : null;
+  } catch (error) {
+    console.error('Lỗi khi lấy học kỳ hoạt động:', error);
+    return null;
+  }
+};
+
 export const authService = {
   login: async (username, password) => {
     const data = await fetch(`${BASE_URL}/users?username=${username}&password=${password}`);
@@ -72,12 +97,17 @@ export const clubService = {
   },
   
   getMembers: async (clubId) => {
-    const response = await fetch(`${BASE_URL}/club_members?clubId=${clubId}`);
+    const response = await fetch(`${BASE_URL}/users?clubId=${clubId}`);
     return handleResponse(response);
   }
 };
 
 export const eventService = {
+  getAll: async () => {
+    const response = await fetch(`${BASE_URL}/events`);
+    return handleResponse(response);
+  },
+
   getAllApproved: async (limit) => {
     const url = limit 
       ? `${BASE_URL}/events?status=approved&_limit=${limit}` 
@@ -102,12 +132,20 @@ export const eventService = {
   },
 
   create: async (eventData) => {
+    const activeTerm = await getActiveSemesterName();
+    const payload = { 
+      ...eventData, 
+      status: 'pending', 
+      pdpFeedback: '', 
+      hasReport: false,
+      term: activeTerm
+    };
     const response = await fetch(`${BASE_URL}/events`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...eventData, status: 'pending', pdpFeedback: '', hasReport: false }),
+      body: JSON.stringify(payload),
     });
     return handleResponse(response);
   },
@@ -132,6 +170,11 @@ export const eventService = {
 };
 
 export const newsService = {
+  getAll: async () => {
+    const response = await fetch(`${BASE_URL}/news`);
+    return handleResponse(response);
+  },
+
   getAllApproved: async (limit) => {
     const url = limit 
       ? `${BASE_URL}/news?status=approved&_limit=${limit}` 
@@ -156,12 +199,20 @@ export const newsService = {
   },
 
   create: async (newsData) => {
+    const activeTerm = await getActiveSemesterName();
+    const payload = { 
+      ...newsData, 
+      status: 'pending', 
+      pdpFeedback: '', 
+      createdAt: new Date().toISOString(),
+      term: activeTerm
+    };
     const response = await fetch(`${BASE_URL}/news`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...newsData, status: 'pending', pdpFeedback: '', createdAt: new Date().toISOString() }),
+      body: JSON.stringify(payload),
     });
     return handleResponse(response);
   },
@@ -186,6 +237,11 @@ export const newsService = {
 };
 
 export const reportService = {
+  getAll: async () => {
+    const response = await fetch(`${BASE_URL}/reports`);
+    return handleResponse(response);
+  },
+
   getPending: async () => {
     const response = await fetch(`${BASE_URL}/reports?status=pending`);
     return handleResponse(response);
@@ -197,12 +253,20 @@ export const reportService = {
   },
 
   create: async (reportData) => {
+    const activeTerm = await getActiveSemesterName();
+    const payload = { 
+      ...reportData, 
+      status: 'pending', 
+      pdpFeedback: '', 
+      submittedAt: new Date().toISOString(),
+      term: activeTerm
+    };
     const response = await fetch(`${BASE_URL}/reports`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...reportData, status: 'pending', pdpFeedback: '', submittedAt: new Date().toISOString() }),
+      body: JSON.stringify(payload),
     });
     return handleResponse(response);
   },
@@ -214,6 +278,47 @@ export const reportService = {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(reportData),
+    });
+    return handleResponse(response);
+  }
+};
+
+export const semesterService = {
+  getAll: async () => {
+    const response = await fetch(`${BASE_URL}/semesters`);
+    return handleResponse(response);
+  },
+
+  getById: async (id) => {
+    const response = await fetch(`${BASE_URL}/semesters/${id}`);
+    return handleResponse(response);
+  },
+
+  create: async (semesterData) => {
+    const response = await fetch(`${BASE_URL}/semesters`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(semesterData),
+    });
+    return handleResponse(response);
+  },
+
+  update: async (id, semesterData) => {
+    const response = await fetch(`${BASE_URL}/semesters/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(semesterData),
+    });
+    return handleResponse(response);
+  },
+
+  delete: async (id) => {
+    const response = await fetch(`${BASE_URL}/semesters/${id}`, {
+      method: 'DELETE',
     });
     return handleResponse(response);
   }

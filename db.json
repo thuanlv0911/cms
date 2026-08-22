@@ -471,5 +471,61 @@
       "pdpFeedback": ""
     }
   ],
-  "reports": []
+  "reports": [],
+  "semesters": [
+    {
+      "id": "sem_1",
+      "name": "Fall2026",
+      "startDate": "07/09/2026",
+      "endDate": "31/12/2026"
+    },
+    {
+      "id": "sem_2",
+      "name": "Summer2026",
+      "startDate": "11/05/2026",
+      "endDate": "06/09/2026"
+    },
+    {
+      "id": "sem_3",
+      "name": "Spring2026",
+      "startDate": "05/01/2026",
+      "endDate": "10/05/2026"
+    },
+    {
+      "id": "sem_4",
+      "name": "Fall2025",
+      "startDate": "08/09/2025",
+      "endDate": "27/12/2025"
+    },
+    {
+      "id": "sem_5",
+      "name": "Summer2025",
+      "startDate": "12/05/2025",
+      "endDate": "05/09/2025"
+    },
+    {
+      "id": "sem_6",
+      "name": "Spring2025",
+      "startDate": "06/01/2025",
+      "endDate": "10/05/2025"
+    },
+    {
+      "id": "sem_7",
+      "name": "Fall2024",
+      "startDate": "02/09/2024",
+      "endDate": "31/12/2024"
+    },
+    {
+      "id": "sem_8",
+      "name": "Summer2024",
+      "startDate": "06/05/2024",
+      "endDate": "31/08/2024"
+    },
+    {
+      "id": "sem_9",
+      "name": "Spring2024",
+      "startDate": "01/01/2024",
+      "endDate": "04/05/2024"
+    }
+  ]
 }

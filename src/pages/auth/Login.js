@@ -14,7 +14,11 @@ const Login = () => {
 
   useEffect(() => {
     if (currentUser) {
-      navigate('/');
+      if (currentUser.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     }
   }, [currentUser, navigate]);
 
@@ -28,7 +32,7 @@ const Login = () => {
 
     if (res.success) {
       if (res.user.role === 'admin') {
-        navigate('/admin/accounts');
+        navigate('/admin');
       } else if (res.user.role === 'pdp') {
         navigate('/pdp/requests');
       } else if (res.user.role === 'student' && res.user.isPresident) {

@@ -122,3 +122,90 @@
   background-color: #fffaf5 !important;
   border-bottom: 3px solid var(--fpt-orange) !important;
 }
+
+/* Admin Dashboard Styles */
+.admin-sidebar {
+  background-color: #fffaf5;
+  border-right: 3px solid var(--fpt-orange);
+  width: 280px;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.admin-sidebar-brand {
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.admin-sidebar-link {
+  color: #333 !important;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.admin-sidebar-link:hover {
+  color: var(--fpt-orange) !important;
+  background-color: rgba(243, 112, 33, 0.08) !important;
+}
+
+.admin-sidebar-link.active {
+  color: #fff !important;
+  background-color: var(--fpt-orange) !important;
+}
+
+.admin-profile-section {
+  border-top: 1px solid rgba(0,0,0,0.08);
+  background-color: rgba(0,0,0,0.02);
+}
+
+.dashboard-icon-wrapper {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.stat-card-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.25rem;
+}
+
+.bg-light-blue {
+  background-color: #e6f0ff !important;
+}
+.text-blue {
+  color: #0d6efd !important;
+}
+
+.bg-light-green {
+  background-color: #e6f9f0 !important;
+}
+.text-green {
+  color: #198754 !important;
+}
+
+.bg-light-yellow {
+  background-color: #fff3cd !important;
+}
+.text-yellow {
+  color: #ffc107 !important;
+}
+
+.admin-table-header {
+  background-color: #0b2240 !important;
+  color: white !important;
+}
+

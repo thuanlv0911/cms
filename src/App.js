@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import HeaderNavbar from './components/HeaderNavbar';
 import Footer from './components/Footer';
@@ -14,34 +14,43 @@ import NewsDetail from './pages/student/NewsDetail';
 import Profile from './pages/Profile';
 import Contact from './pages/Contact';
 import Unauthorized from './pages/auth/Unauthorized';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import './App.css';
+
+const UserLayout = () => {
+  return (
+    <div className="d-flex flex-column min-vh-100 bg-light">
+      <HeaderNavbar />
+      <main className="flex-grow-1">
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
+  );
+};
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="d-flex flex-column min-vh-100 bg-light">
-          <HeaderNavbar />
-          
-          <main className="flex-grow-1">
-            <Routes>
-              <Route path="/" element={<Homepage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/clubs" element={<ClubList />} />
-              <Route path="/clubs/:id" element={<ClubDetail />} />
-              <Route path="/events" element={<EventList />} />
-              <Route path="/events/:id" element={<EventDetail />} />
-              <Route path="/news" element={<NewsList />} />
-              <Route path="/news/:id" element={<NewsDetail />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/unauthorized" element={<Unauthorized />} />
-              <Route path="*" element={<Homepage />} />
-            </Routes>
-          </main>
-          
-          <Footer />
-        </div>
+        <Routes>
+          <Route element={<UserLayout />}>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/clubs" element={<ClubList />} />
+            <Route path="/clubs/:id" element={<ClubDetail />} />
+            <Route path="/events" element={<EventList />} />
+            <Route path="/events/:id" element={<EventDetail />} />
+            <Route path="/news" element={<NewsList />} />
+            <Route path="/news/:id" element={<NewsDetail />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route path="*" element={<Homepage />} />
+          </Route>
+
+          <Route path="/admin" element={<AdminDashboard />} />
+        </Routes>
       </Router>
     </AuthProvider>
   );

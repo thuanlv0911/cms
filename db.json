@@ -4,21 +4,25 @@
       "id": "u1",
       "username": "admin",
       "password": "123",
-      "fullName": "Hệ thống Admin",
+      "fullName": "Admin",
       "email": "admin@fpt.edu.vn",
       "role": "admin",
       "clubId": null,
-      "isPresident": false
+      "isPresident": false,
+      "code": "ADM001",
+      "createdAt": "01/01/2025"
     },
     {
       "id": "u2",
       "username": "pdp",
       "password": "123",
-      "fullName": "Phòng PDP Staff",
+      "fullName": "PDP Staff",
       "email": "pdp@fpt.edu.vn",
       "role": "pdp",
       "clubId": null,
-      "isPresident": false
+      "isPresident": false,
+      "code": "PDP001",
+      "createdAt": "15/6/2026"
     },
     {
       "id": "u3",
@@ -28,7 +32,9 @@
       "email": "president.bg@fpt.edu.vn",
       "role": "student",
       "clubId": "c3",
-      "isPresident": true
+      "isPresident": true,
+      "code": "HE150123",
+      "createdAt": "05/09/2024"
     },
     {
       "id": "u4",
@@ -38,17 +44,9 @@
       "email": "student1@fpt.edu.vn",
       "role": "student",
       "clubId": null,
-      "isPresident": false
-    },
-    {
-      "id": "u5",
-      "username": "student2",
-      "password": "123",
-      "fullName": "Phạm Thành Viên",
-      "email": "student2.bg@fpt.edu.vn",
-      "role": "student",
-      "clubId": "c3",
-      "isPresident": false
+      "isPresident": false,
+      "code": "HE150789",
+      "createdAt": "12/10/2024"
     }
   ],
   "clubs": [

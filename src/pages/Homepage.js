@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Carousel, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { clubService, eventService, newsService } from '../services/api';
 import ClubCard from '../components/ClubCard';
 import EventCard from '../components/EventCard';
 import NewsCard from '../components/NewsCard';
+import { AuthContext } from '../context/AuthContext';
 
 const BANNERS = [
   {
@@ -24,6 +25,15 @@ const Homepage = () => {
   const [events, setEvents] = useState([]);
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUser && currentUser.role === 'admin') {
+      navigate('/admin');
+    }
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {

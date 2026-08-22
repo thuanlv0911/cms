@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Button, Badge } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { FaCalendarAlt, FaMapMarkerAlt, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
 
 const EventCard = ({ event, truncate = false, showDetailButton = false }) => {
   const navigate = useNavigate();
@@ -70,14 +70,14 @@ const EventCard = ({ event, truncate = false, showDetailButton = false }) => {
           )}
           {event.registrationLink && (
             <Button
-              href={event.registrationLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              variant="warning"
-              className="flex-fill fw-semibold btn-sm d-flex align-items-center justify-content-center text-dark"
-              onClick={(e) => e.stopPropagation()}
+              variant="outline-dark"
+              className="flex-fill fw-semibold btn-sm d-flex align-items-center justify-content-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/events/${event.id}`);
+              }}
             >
-              Đăng ký <FaExternalLinkAlt className="ms-1" size={10} />
+              Đăng ký
             </Button>
           )}
         </div>

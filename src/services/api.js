@@ -72,7 +72,7 @@ export const clubService = {
   },
   
   getMembers: async (clubId) => {
-    const response = await fetch(`${BASE_URL}/club_members?clubId=${clubId}`);
+    const response = await fetch(`${BASE_URL}/users?clubId=${clubId}`);
     return handleResponse(response);
   }
 };

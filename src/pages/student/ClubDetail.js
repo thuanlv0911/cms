@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Tabs, Tab, Badge, Table, Button } from 'react-bootstrap';
-import { useParams, Link } from 'react-router-dom';
-import { FaUserCircle } from 'react-icons/fa';
+import { Container, Card, Tabs, Tab, Badge, Row, Col } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
+import { FaCalendarAlt } from 'react-icons/fa';
 import { clubService, eventService, newsService } from '../../services/api';
 import EventCard from '../../components/EventCard';
 import NewsCard from '../../components/NewsCard';
@@ -52,20 +52,55 @@ const ClubDetail = () => {
     return (
       <Container className="py-5 text-center">
         <h2>Không tìm thấy Câu lạc bộ!</h2>
-        <Button as={Link} to="/clubs" variant="primary" className="mt-3">Quay lại danh sách CLB</Button>
       </Container>
     );
   }
 
+  const president = members.find(m => m.isPresident === true);
+
   return (
     <Container className="py-5">
-      <Card className="border-0 shadow-sm mb-4 p-4">
-        <Card.Body className="d-flex align-items-center flex-wrap gap-4">
-          <div className="fs-1 bg-light p-3 rounded shadow-sm">{club.logo}</div>
-          <div>
-            <Badge bg="secondary" className="mb-2 px-3 py-2 fs-6">{club.category}</Badge>
-            <h1 className="fw-bold text-dark">{club.name}</h1>
-            <p className="text-muted mb-0">{club.description}</p>
+      <Card className="border-0 shadow-sm mb-4 overflow-hidden bg-white">
+        <Card.Body className="p-4 p-md-5">
+          <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-4">
+            <div className="flex-shrink-0 shadow-sm border" style={{ width: '200px', height: '200px', overflow: 'hidden', borderRadius: '16px' }}>
+              <img 
+                src={club.image || `/images/clubs/${club.id}.jpg`} 
+                alt={club.name}
+                className="w-100 h-100 object-fit-cover"
+                onError={(e) => {
+                  e.target.src = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&auto=format&fit=crop';
+                }}
+              />
+            </div>
+            
+            <div className="text-center text-md-start">
+              <h1 className="fw-bold text-dark mb-2 display-6">{club.name}</h1>
+              
+              <div className="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start align-items-center mb-3">
+                <Badge bg="secondary" className="px-3 py-2 fw-semibold">
+                  {club.category}
+                </Badge>
+                {club.foundedDate && (
+                  <span className="text-muted small border px-3 py-1.5 rounded-pill bg-light d-inline-flex align-items-center">
+                    <FaCalendarAlt className="me-2 text-primary" size={12} />
+                    Ngày thành lập: {club.foundedDate}
+                  </span>
+                )}
+              </div>
+
+              {president && (
+                <div className="bg-light p-3 rounded-3 mb-3 d-inline-block text-start w-100 w-md-auto border border-light">
+                  <span className="text-muted small d-block">Chủ nhiệm câu lạc bộ</span>
+                  <span className="fw-semibold text-dark fs-6">{president.fullName}</span>
+                  <span className="text-muted small ms-2">({president.email})</span>
+                </div>
+              )}
+              
+              <p className="text-muted fs-6 mb-0 mt-3" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}>
+                {club.description}
+              </p>
+            </div>
           </div>
         </Card.Body>
       </Card>
@@ -101,48 +136,6 @@ const ClubDetail = () => {
               ))}
             </Row>
           )}
-        </Tab>
-
-        <Tab eventKey="members" title={`Thành viên (${members.length})`}>
-          <Card className="border-0 shadow-sm">
-            <Card.Body className="p-0">
-              <Table hover responsive className="mb-0 align-middle">
-                <thead className="table-light">
-                  <tr>
-                    <th>Họ và tên</th>
-                    <th>MSSV</th>
-                    <th>Email</th>
-                    <th>Vai trò trong CLB</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {members.length === 0 ? (
-                    <tr>
-                      <td colSpan="4" className="text-center py-4 text-muted">
-                        Danh sách thành viên trống.
-                      </td>
-                    </tr>
-                  ) : (
-                    members.map((member) => (
-                      <tr key={member.id}>
-                        <td className="fw-semibold">
-                          <FaUserCircle className="text-secondary me-2" size={20} />
-                          {member.fullName}
-                        </td>
-                        <td>{member.studentId}</td>
-                        <td>{member.email}</td>
-                        <td>
-                          <Badge bg={member.role === 'Chủ nhiệm' ? 'danger' : 'primary'}>
-                            {member.role}
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </Table>
-            </Card.Body>
-          </Card>
         </Tab>
       </Tabs>
     </Container>

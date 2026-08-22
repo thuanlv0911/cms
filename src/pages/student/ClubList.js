@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Form, Tabs, Tab } from 'react-bootstrap';
+import { Container, Row, Col, Form, Tabs, Tab, Pagination } from 'react-bootstrap';
 import { clubService } from '../../services/api';
 import ClubCard from '../../components/ClubCard';
 
@@ -7,6 +7,8 @@ const ClubList = () => {
   const [clubs, setClubs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('Tất cả');
+  const [activePage, setActivePage] = useState(1);
 
   useEffect(() => {
     clubService.getAll()
@@ -20,15 +22,28 @@ const ClubList = () => {
       });
   }, []);
 
-  const categories = ['Lĩnh vực khác', 'Thể thao', 'Học thuật', 'Nghệ thuật'];
+  const categories = ['Tất cả', 'Lĩnh vực khác', 'Thể thao', 'Học thuật', 'Nghệ thuật'];
 
-  const getFilteredClubs = (category) => {
+  const getFilteredClubsList = (tab) => {
+    if (tab === 'Tất cả') {
+      return clubs.filter(club => club.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    }
     return clubs.filter(
       (club) =>
-        club.category === category &&
+        club.category === tab &&
         club.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setActivePage(1);
+  };
+
+  const currentTabClubs = getFilteredClubsList(activeTab);
+  const totalPages = Math.ceil(currentTabClubs.length / 6);
+  const startIndex = (activePage - 1) * 6;
+  const paginatedClubs = currentTabClubs.slice(startIndex, startIndex + 6);
 
   return (
     <Container className="py-5">
@@ -43,7 +58,7 @@ const ClubList = () => {
             type="text"
             placeholder="🔍 Tìm kiếm câu lạc bộ theo tên..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
             className="shadow-sm p-3 rounded-pill border-0"
           />
         </Col>
@@ -56,24 +71,55 @@ const ClubList = () => {
           </div>
         </div>
       ) : (
-        <Tabs defaultActiveKey="Lĩnh vực khác" id="club-tabs" className="mb-4 justify-content-center fw-semibold custom-tabs">
+        <Tabs 
+          activeKey={activeTab} 
+          onSelect={(k) => {
+            setActiveTab(k);
+            setActivePage(1);
+          }}
+          id="club-tabs" 
+          className="mb-4 justify-content-center fw-semibold custom-tabs"
+        >
           {categories.map((cat) => {
-            const filtered = getFilteredClubs(cat);
+            const tabFiltered = getFilteredClubsList(cat);
+            const isCurrentTab = cat === activeTab;
+            const listToRender = isCurrentTab ? paginatedClubs : [];
+
             return (
-              <Tab eventKey={cat} title={`${cat} (${filtered.length})`} key={cat}>
-                <Row xs={1} md={2} lg={3} className="g-4 mt-2">
-                  {filtered.length === 0 ? (
-                    <Col xs={12} className="text-center py-5">
-                      <p className="text-muted fs-5">Không tìm thấy câu lạc bộ nào phù hợp.</p>
-                    </Col>
-                  ) : (
-                    filtered.map((club) => (
-                      <Col key={club.id}>
-                        <ClubCard club={club} truncate={false} />
-                      </Col>
-                    ))
-                  )}
-                </Row>
+              <Tab eventKey={cat} title={`${cat} (${tabFiltered.length})`} key={cat}>
+                {isCurrentTab && (
+                  <>
+                    <Row xs={1} md={2} lg={3} className="g-4 mt-2">
+                      {listToRender.length === 0 ? (
+                        <Col xs={12} className="text-center py-5">
+                          <p className="text-muted fs-5">Không tìm thấy câu lạc bộ nào phù hợp.</p>
+                        </Col>
+                      ) : (
+                        listToRender.map((club) => (
+                          <Col key={club.id}>
+                            <ClubCard club={club} truncate={false} />
+                          </Col>
+                        ))
+                      )}
+                    </Row>
+                    
+                    {totalPages > 1 && (
+                      <Pagination className="justify-content-center mt-5">
+                        <Pagination.Prev disabled={activePage === 1} onClick={() => setActivePage(activePage - 1)} />
+                        {[...Array(totalPages)].map((_, i) => (
+                          <Pagination.Item 
+                            key={i + 1} 
+                            active={i + 1 === activePage} 
+                            onClick={() => setActivePage(i + 1)}
+                          >
+                            {i + 1}
+                          </Pagination.Item>
+                        ))}
+                        <Pagination.Next disabled={activePage === totalPages} onClick={() => setActivePage(activePage + 1)} />
+                      </Pagination>
+                    )}
+                  </>
+                )}
               </Tab>
             );
           })}

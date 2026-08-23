@@ -1,33 +1,156 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Row, Col, Card, Table, Button, Alert, Badge } from 'react-bootstrap';
+import { Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import { clubService, eventService, newsService, semesterService } from '../../services/api';
+import DashboardTab from './components/DashboardTab';
+import ClubTab from './components/ClubTab';
+import EventTab from './components/EventTab';
 import {
   FaTachometerAlt,
   FaUsers,
   FaCalendarAlt,
   FaNewspaper,
-  FaBell,
   FaSignOutAlt,
-  FaUserCircle
+  FaUserCircle,
+  FaFileAlt
 } from 'react-icons/fa';
 
 const PresidentDashboard = () => {
   const { currentUser, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const [clubInfo, setClubInfo] = useState(null);
+  const [members, setMembers] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [news, setNews] = useState([]);
+  const [semesters, setSemesters] = useState([]);
+  const [activeSemesterName, setActiveSemesterName] = useState('');
+  const [notifications, setNotifications] = useState([]);
+  const [isCreatingEvent, setIsCreatingEvent] = useState(false);
+
+  const parseDateStr = (dateStr) => {
+    if (!dateStr) return null;
+    const parts = dateStr.split('/');
+    if (parts.length !== 3) return null;
+    const [day, month, year] = parts.map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  const getSemesterStatus = (sem) => {
+    const start = parseDateStr(sem.startDate);
+    const end = parseDateStr(sem.endDate);
+    if (!start || !end) return 'Không xác định';
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    if (today < start) {
+      return 'Sắp diễn ra';
+    } else if (today >= start && today <= end) {
+      return 'Đang diễn ra';
+    } else {
+      return 'Đã kết thúc';
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      if (!currentUser || !currentUser.clubId) {
+        setLoading(false);
+        return;
+      }
+
+      const [clubsData, semestersData, membersData, eventsData, newsData] = await Promise.all([
+        clubService.getAll(),
+        semesterService.getAll(),
+        clubService.getMembers(currentUser.clubId),
+        eventService.getByClub(currentUser.clubId),
+        newsService.getByClub(currentUser.clubId)
+      ]);
+
+      const currentClub = clubsData.find(c => c.id === currentUser.clubId);
+      setClubInfo(currentClub);
+
+      const sortedSem = [...semestersData].sort((a, b) => {
+        const dateA = parseDateStr(a.startDate);
+        const dateB = parseDateStr(b.startDate);
+        return (dateB || 0) - (dateA || 0);
+      });
+      setSemesters(sortedSem);
+
+      const activeSem = sortedSem.find(sem => getSemesterStatus(sem) === 'Đang diễn ra');
+      const activeSemName = activeSem ? activeSem.name : '';
+      setActiveSemesterName(activeSemName);
+
+      setMembers(membersData);
+      setEvents(eventsData);
+      setNews(newsData);
+
+      const eventNotifications = eventsData
+        .filter(e => e.pdpFeedback || e.status !== 'pending')
+        .map(e => ({
+          id: `e-notif-${e.id}`,
+          type: 'Sự kiện',
+          title: e.title,
+          status: e.status,
+          feedback: e.pdpFeedback || 'Không có nhận xét chi tiết.',
+          date: e.startDate ? e.startDate.split('T')[0] : ''
+        }));
+
+      const newsNotifications = newsData
+        .filter(n => n.pdpFeedback || n.status !== 'pending')
+        .map(n => ({
+          id: `n-notif-${n.id}`,
+          type: 'Tin tức',
+          title: n.title,
+          status: n.status,
+          feedback: n.pdpFeedback || 'Không có nhận xét chi tiết.',
+          date: n.createdAt ? n.createdAt.split('T')[0] : ''
+        }));
+
+      const allNotifs = [...eventNotifications, ...newsNotifications].sort((a, b) => {
+        return new Date(b.date || 0) - new Date(a.date || 0);
+      });
+      setNotifications(allNotifs);
+
+    } catch (err) {
+      console.error('Lỗi khi tải dữ liệu chủ nhiệm:', err);
+      setError('Không thể kết nối đến máy chủ để tải dữ liệu.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (!currentUser) {
-      navigate('/login');
-    } else if (currentUser.role !== 'student' || !currentUser.isPresident) {
-      navigate('/unauthorized');
+    if (currentUser && currentUser.role === 'student' && currentUser.isPresident) {
+      fetchData();
     }
-  }, [currentUser, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
 
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const handleSubmitEvent = async (eventPayload) => {
+    try {
+      setLoading(true);
+      await eventService.create(eventPayload);
+      setIsCreatingEvent(false);
+      await fetchData();
+      alert('Đã gửi sự kiện lên phòng PDP để xét duyệt thành công!');
+    } catch (err) {
+      console.error('Lỗi khi gửi sự kiện:', err);
+      alert('Có lỗi xảy ra khi gửi phê duyệt sự kiện: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!currentUser || currentUser.role !== 'student' || !currentUser.isPresident) {
@@ -44,8 +167,8 @@ const PresidentDashboard = () => {
         return 'Quản lý Events';
       case 'news':
         return 'Quản lý Tin tức';
-      case 'notifications':
-        return 'Thông báo';
+      case 'reports':
+        return 'Báo cáo hậu sự kiện';
       default:
         return 'Dashboard Chủ nhiệm';
     }
@@ -61,160 +184,77 @@ const PresidentDashboard = () => {
         return 'Tạo mới, chỉnh sửa và theo dõi trạng thái phê duyệt sự kiện';
       case 'news':
         return 'Đăng tin tức, bài viết truyền thông quảng bá hoạt động CLB';
-      case 'notifications':
-        return 'Xem thông báo từ phòng PDP và gửi thông báo tới thành viên';
+      case 'reports':
+        return 'Nộp và quản lý báo cáo kết quả sau sự kiện để PDP nghiệm thu';
       default:
         return 'Khu vực quản lý dành cho Chủ nhiệm CLB';
     }
   };
 
   const renderTabContent = () => {
+    if (loading && semesters.length === 0) {
+      return (
+        <div className="text-center py-5">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Đang tải...</span>
+          </div>
+          <p className="mt-2 text-muted">Đang tải dữ liệu hệ thống...</p>
+        </div>
+      );
+    }
+
+    if (error) {
+      return <Alert variant="danger">{error}</Alert>;
+    }
+
     switch (activeTab) {
       case 'dashboard':
         return (
-          <div>
-            <div className="mb-4 bg-white p-4 rounded shadow-sm">
-              <h4 className="fw-bold text-dark">Xin chào, {currentUser.fullName}! 👋</h4>
-              <p className="text-muted mb-0">Chào mừng bạn quay trở lại trang quản trị hoạt động của câu lạc bộ.</p>
-            </div>
-
-            <Row className="g-4 mb-4">
-              <Col md={3}>
-                <Card className="border-0 shadow-sm p-3 h-100">
-                  <Card.Body className="d-flex align-items-center">
-                    <div className="stat-card-icon bg-light-blue text-blue me-3">
-                      <FaUsers size={22} />
-                    </div>
-                    <div>
-                      <div className="text-muted small fw-semibold text-uppercase" style={{ fontSize: '0.72rem' }}>Thành viên</div>
-                      <h3 className="fw-bold mb-0 mt-1">45</h3>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-              <Col md={3}>
-                <Card className="border-0 shadow-sm p-3 h-100">
-                  <Card.Body className="d-flex align-items-center">
-                    <div className="stat-card-icon bg-light-green text-green me-3">
-                      <FaCalendarAlt size={22} />
-                    </div>
-                    <div>
-                      <div className="text-muted small fw-semibold text-uppercase" style={{ fontSize: '0.72rem' }}>Sự kiện trong kỳ</div>
-                      <h3 className="fw-bold mb-0 mt-1">4</h3>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-              <Col md={3}>
-                <Card className="border-0 shadow-sm p-3 h-100">
-                  <Card.Body className="d-flex align-items-center">
-                    <div className="stat-card-icon bg-light-yellow text-yellow me-3">
-                      <FaNewspaper size={20} />
-                    </div>
-                    <div>
-                      <div className="text-muted small fw-semibold text-uppercase" style={{ fontSize: '0.72rem' }}>Bài viết tin tức</div>
-                      <h3 className="fw-bold mb-0 mt-1">8</h3>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-              <Col md={3}>
-                <Card className="border-0 shadow-sm p-3 h-100">
-                  <Card.Body className="d-flex align-items-center">
-                    <div className="stat-card-icon bg-light-orange text-orange me-3">
-                      <FaBell size={20} />
-                    </div>
-                    <div>
-                      <div className="text-muted small fw-semibold text-uppercase" style={{ fontSize: '0.72rem' }}>Thông báo mới</div>
-                      <h3 className="fw-bold mb-0 mt-1">2</h3>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-            </Row>
-
-            <Card className="border-0 shadow-sm">
-              <Card.Body className="p-4">
-                <h5 className="fw-bold mb-4 text-dark">Lịch sử sự kiện gần đây</h5>
-                <Table hover className="align-middle mb-0">
-                  <thead>
-                    <tr>
-                      <th className="admin-table-header py-3 px-4" style={{ borderRadius: '8px 0 0 0' }}>Tên Sự Kiện</th>
-                      <th className="admin-table-header py-3 px-4">Ngày tổ chức</th>
-                      <th className="admin-table-header py-3 px-4">Loại sự kiện</th>
-                      <th className="admin-table-header py-3 px-4" style={{ borderRadius: '0 8px 0 0' }}>Trạng thái</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="fw-bold py-3 px-4">Đêm Trải Nghiệm Cờ Tỷ Phú - Monopoly Night</td>
-                      <td className="py-3 px-4">10/09/2026</td>
-                      <td className="py-3 px-4">Nội bộ</td>
-                      <td className="py-3 px-4">
-                        <Badge bg="warning" className="text-dark px-3 py-2 fw-medium rounded-pill">Đang chờ duyệt</Badge>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="fw-bold py-3 px-4">Giải đấu Ma Sói Mùa Thu 2026</td>
-                      <td className="py-3 px-4">01/09/2026</td>
-                      <td className="py-3 px-4">Công khai</td>
-                      <td className="py-3 px-4">
-                        <Badge bg="success" className="px-3 py-2 fw-medium rounded-pill">Đã duyệt</Badge>
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Card.Body>
-            </Card>
-          </div>
+          <DashboardTab
+            clubInfo={clubInfo}
+            currentUser={currentUser}
+            activeSemesterName={activeSemesterName}
+            membersCount={members.length}
+            eventsCount={events.filter(e => e.term === activeSemesterName).length}
+            newsCount={news.filter(n => n.term === activeSemesterName).length}
+            notifications={notifications}
+          />
         );
 
       case 'clubs':
-        return (
-          <Card className="border-0 shadow-sm">
-            <Card.Body className="p-4">
-              <h5 className="fw-bold mb-3 text-dark">Quản lý Câu Lạc Bộ</h5>
-              <Alert variant="info" className="mb-0">
-                <strong>Thông báo:</strong> Chức năng quản lý chi tiết thông tin CLB và danh sách thành viên dành cho Chủ nhiệm đang được chuẩn bị xây dựng. Nội dung cụ thể sẽ được cập nhật sau.
-              </Alert>
-            </Card.Body>
-          </Card>
-        );
+        return <ClubTab members={members} />;
 
       case 'events':
         return (
-          <Card className="border-0 shadow-sm">
-            <Card.Body className="p-4">
-              <h5 className="fw-bold mb-3 text-dark">Quản lý Events</h5>
-              <Alert variant="info" className="mb-0">
-                <strong>Thông báo:</strong> Chức năng lập kế hoạch sự kiện, gửi yêu cầu xét duyệt tới phòng PDP dành cho Chủ nhiệm đang được chuẩn bị xây dựng. Nội dung cụ thể sẽ được cập nhật sau.
-              </Alert>
-            </Card.Body>
-          </Card>
+          <EventTab
+            events={events}
+            clubInfo={clubInfo}
+            currentUser={currentUser}
+            isCreatingEvent={isCreatingEvent}
+            setIsCreatingEvent={setIsCreatingEvent}
+            onSubmitSuccess={handleSubmitEvent}
+            loading={loading}
+          />
         );
 
       case 'news':
         return (
-          <Card className="border-0 shadow-sm">
-            <Card.Body className="p-4">
-              <h5 className="fw-bold mb-3 text-dark">Quản lý Tin tức</h5>
-              <Alert variant="info" className="mb-0">
-                <strong>Thông báo:</strong> Chức năng soạn thảo bài viết truyền thông, cập nhật tin tức câu lạc bộ dành cho Chủ nhiệm đang được chuẩn bị xây dựng. Nội dung cụ thể sẽ được cập nhật sau.
-              </Alert>
-            </Card.Body>
-          </Card>
+          <div className="bg-white p-4 rounded shadow-sm">
+            <h5 className="fw-bold mb-3 text-dark">Quản lý Tin tức</h5>
+            <Alert variant="info" className="mb-0">
+              <strong>Thông báo:</strong> Chức năng soạn thảo bài viết truyền thông, cập nhật tin tức câu lạc bộ dành cho Chủ nhiệm đang được chuẩn bị xây dựng. Nội dung cụ thể sẽ được cập nhật sau.
+            </Alert>
+          </div>
         );
 
-      case 'notifications':
+      case 'reports':
         return (
-          <Card className="border-0 shadow-sm">
-            <Card.Body className="p-4">
-              <h5 className="fw-bold mb-3 text-dark">Thông báo</h5>
-              <Alert variant="info" className="mb-0">
-                <strong>Thông báo:</strong> Hộp thư nhận thông báo từ phòng PDP và gửi thông báo chung cho các thành viên trong CLB dành cho Chủ nhiệm đang được chuẩn bị xây dựng. Nội dung cụ thể sẽ được cập nhật sau.
-              </Alert>
-            </Card.Body>
-          </Card>
+          <div className="bg-white p-4 rounded shadow-sm">
+            <h5 className="fw-bold mb-3 text-dark">Báo cáo hậu sự kiện</h5>
+            <Alert variant="info" className="mb-0">
+              <strong>Thông báo:</strong> Chức năng tạo và nộp báo cáo hậu sự kiện dành cho Chủ nhiệm đang được chuẩn bị xây dựng. Nội dung cụ thể sẽ được cập nhật sau.
+            </Alert>
+          </div>
         );
 
       default:
@@ -238,7 +278,7 @@ const PresidentDashboard = () => {
           <div className="p-3">
             <div
               className={`admin-sidebar-link d-flex align-items-center p-3 mb-2 ${activeTab === 'dashboard' ? 'active' : ''}`}
-              onClick={() => setActiveTab('dashboard')}
+              onClick={() => { setActiveTab('dashboard'); setIsCreatingEvent(false); }}
             >
               <FaTachometerAlt className="me-3" size={18} />
               <span>Dashboard</span>
@@ -246,7 +286,7 @@ const PresidentDashboard = () => {
 
             <div
               className={`admin-sidebar-link d-flex align-items-center p-3 mb-2 ${activeTab === 'clubs' ? 'active' : ''}`}
-              onClick={() => setActiveTab('clubs')}
+              onClick={() => { setActiveTab('clubs'); setIsCreatingEvent(false); }}
             >
               <FaUsers className="me-3" size={18} />
               <span>Quản lý CLB</span>
@@ -254,7 +294,7 @@ const PresidentDashboard = () => {
 
             <div
               className={`admin-sidebar-link d-flex align-items-center p-3 mb-2 ${activeTab === 'events' ? 'active' : ''}`}
-              onClick={() => setActiveTab('events')}
+              onClick={() => { setActiveTab('events'); setIsCreatingEvent(false); }}
             >
               <FaCalendarAlt className="me-3" size={18} />
               <span>Quản lý events</span>
@@ -262,18 +302,18 @@ const PresidentDashboard = () => {
 
             <div
               className={`admin-sidebar-link d-flex align-items-center p-3 mb-2 ${activeTab === 'news' ? 'active' : ''}`}
-              onClick={() => setActiveTab('news')}
+              onClick={() => { setActiveTab('news'); setIsCreatingEvent(false); }}
             >
               <FaNewspaper className="me-3" size={18} />
               <span>Quản lý tin tức</span>
             </div>
 
             <div
-              className={`admin-sidebar-link d-flex align-items-center p-3 mb-2 ${activeTab === 'notifications' ? 'active' : ''}`}
-              onClick={() => setActiveTab('notifications')}
+              className={`admin-sidebar-link d-flex align-items-center p-3 mb-2 ${activeTab === 'reports' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('reports'); setIsCreatingEvent(false); }}
             >
-              <FaBell className="me-3" size={18} />
-              <span>Thông báo</span>
+              <FaFileAlt className="me-3" size={18} />
+              <span>Báo cáo hậu sự kiện</span>
             </div>
           </div>
         </div>
@@ -282,7 +322,8 @@ const PresidentDashboard = () => {
           <div className="d-flex align-items-center overflow-hidden">
             <FaUserCircle size={35} className="text-secondary me-2 flex-shrink-0" />
             <div className="text-truncate" style={{ maxWidth: '140px' }}>
-              <div className="fw-semibold text-dark small text-truncate">Chủ nhiệm</div>
+              <div className="fw-semibold text-dark small text-truncate">{currentUser.fullName}</div>
+              <div className="text-muted small" style={{ fontSize: '0.7rem' }}>Chủ nhiệm CLB</div>
             </div>
           </div>
           <Button
@@ -303,7 +344,7 @@ const PresidentDashboard = () => {
             {activeTab === 'clubs' && <FaUsers size={22} />}
             {activeTab === 'events' && <FaCalendarAlt size={22} />}
             {activeTab === 'news' && <FaNewspaper size={22} />}
-            {activeTab === 'notifications' && <FaBell size={22} />}
+            {activeTab === 'reports' && <FaFileAlt size={22} />}
           </div>
           <div>
             <h2 className="fw-bold mb-1 text-dark">{getTabTitle()}</h2>

@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Alert, InputGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { FaUserCircle, FaKey } from 'react-icons/fa';
+import { FaUserCircle, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Profile = () => {
   const { currentUser, changePassword } = useContext(AuthContext);
@@ -11,6 +11,9 @@ const Profile = () => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [pwError, setPwError] = useState('');
   const [pwSuccess, setPwSuccess] = useState('');
 
@@ -44,6 +47,9 @@ const Profile = () => {
       setOldPassword('');
       setNewPassword('');
       setConfirmPassword('');
+      setShowOldPassword(false);
+      setShowNewPassword(false);
+      setShowConfirmPassword(false);
     } else {
       setPwError(res.message || 'Có lỗi xảy ra!');
     }
@@ -59,26 +65,26 @@ const Profile = () => {
       </div>
 
       <Row className="g-4">
-        <Col md={5}>
-          <Card className="border-0 shadow-sm p-4 text-center">
-            <Card.Body>
+        <Col md={6}>
+          <Card className="border-0 shadow-sm p-4 text-center h-100">
+            <Card.Body className="d-flex flex-column justify-content-center align-items-center">
               <FaUserCircle size={100} className="text-secondary mb-3" />
               <h3 className="fw-bold">{currentUser.fullName}</h3>
               <span className="badge bg-primary px-3 py-2 fs-6 mb-4 text-capitalize">
                 {currentUser.role === 'pdp' ? 'PDP Staff' : currentUser.isPresident ? 'Chủ nhiệm CLB' : currentUser.role}
               </span>
-              <hr />
-              <div className="text-start mt-4">
+              <hr className="w-100" />
+              <div className="text-start mt-4 w-100">
                 <p className="mb-2"><strong>Tên đăng nhập:</strong> {currentUser.username}</p>
                 <p className="mb-2"><strong>Email:</strong> {currentUser.email}</p>
                 <p className="mb-0">
                   <strong>Quyền hạn:</strong>{' '}
-                  {currentUser.role === 'admin' 
-                    ? 'Quản trị viên' 
-                    : currentUser.role === 'pdp' 
-                      ? 'PDP Staff' 
-                      : currentUser.isPresident 
-                        ? 'Chủ nhiệm Câu lạc bộ' 
+                  {currentUser.role === 'admin'
+                    ? 'Quản trị viên'
+                    : currentUser.role === 'pdp'
+                      ? 'PDP Staff'
+                      : currentUser.isPresident
+                        ? 'Chủ nhiệm Câu lạc bộ'
                         : 'Sinh viên'}
                 </p>
               </div>
@@ -86,45 +92,73 @@ const Profile = () => {
           </Card>
         </Col>
 
-        <Col md={7}>
-          <Card className="border-0 shadow-sm p-4">
+        <Col md={6}>
+          <Card className="border-0 shadow-sm p-4 h-100">
             <Card.Body>
-              <h4 className="fw-bold mb-4 d-flex align-items-center">
-                <FaKey className="text-warning me-2" /> Đổi mật khẩu
-              </h4>
+              <h4 className="fw-bold mb-4">Đổi mật khẩu</h4>
 
               {pwError && <Alert variant="danger">{pwError}</Alert>}
               {pwSuccess && <Alert variant="success">{pwSuccess}</Alert>}
 
               <Form onSubmit={handlePasswordChange}>
                 <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold">Mật khẩu hiện tại</Form.Label>
-                  <Form.Control
-                    type="password"
-                    required
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                  />
+                  <Form.Label className="fw-semibold">
+                    Mật khẩu hiện tại <span className="text-danger">*</span>
+                  </Form.Label>
+                  <InputGroup>
+                    <Form.Control
+                      type={showOldPassword ? "text" : "password"}
+                      required
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                    />
+                    <InputGroup.Text 
+                      onClick={() => setShowOldPassword(!showOldPassword)}
+                      style={{ cursor: 'pointer', backgroundColor: 'transparent' }}
+                    >
+                      {showOldPassword ? <FaEyeSlash /> : <FaEye />}
+                    </InputGroup.Text>
+                  </InputGroup>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold">Mật khẩu mới</Form.Label>
-                  <Form.Control
-                    type="password"
-                    required
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                  />
+                  <Form.Label className="fw-semibold">
+                    Mật khẩu mới <span className="text-danger">*</span>
+                  </Form.Label>
+                  <InputGroup>
+                    <Form.Control
+                      type={showNewPassword ? "text" : "password"}
+                      required
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                    <InputGroup.Text 
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      style={{ cursor: 'pointer', backgroundColor: 'transparent' }}
+                    >
+                      {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+                    </InputGroup.Text>
+                  </InputGroup>
                 </Form.Group>
 
                 <Form.Group className="mb-4">
-                  <Form.Label className="fw-semibold">Xác nhận mật khẩu mới</Form.Label>
-                  <Form.Control
-                    type="password"
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                  />
+                  <Form.Label className="fw-semibold">
+                    Xác nhận mật khẩu mới <span className="text-danger">*</span>
+                  </Form.Label>
+                  <InputGroup>
+                    <Form.Control
+                      type={showConfirmPassword ? "text" : "password"}
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                    <InputGroup.Text 
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      style={{ cursor: 'pointer', backgroundColor: 'transparent' }}
+                    >
+                      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                    </InputGroup.Text>
+                  </InputGroup>
                 </Form.Group>
 
                 <Button type="submit" variant="primary" className="px-4 py-2 rounded-pill fw-semibold">

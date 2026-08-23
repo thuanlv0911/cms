@@ -467,7 +467,7 @@
         "slot": 2,
         "timeRange": "13:00 - 15:00"
       },
-      "status": "pending",
+      "status": "approved_to_defend",
       "pdpFeedback": "",
       "hasReport": false,
       "term": "Summer2026",

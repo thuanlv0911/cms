@@ -406,15 +406,45 @@ const EventDetail = () => {
             )}
 
             {event.registrationLink ? (
-              <Button
-                href={event.registrationLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="primary"
-                className="w-100 py-3 fw-bold d-flex align-items-center justify-content-center shadow-sm fs-5 rounded-pill"
-              >
-                Đăng ký tham gia
-              </Button>
+              (() => {
+                const now = new Date();
+                const start = new Date(event.startDate);
+                const end = new Date(event.endDate);
+
+                if (now >= end) {
+                  return (
+                    <Button
+                      variant="secondary"
+                      className="w-100 py-3 fw-bold d-flex align-items-center justify-content-center shadow-sm fs-5 rounded-pill"
+                      disabled
+                    >
+                      Đã kết thúc
+                    </Button>
+                  );
+                } else if (now >= start) {
+                  return (
+                    <Button
+                      variant="warning"
+                      className="w-100 py-3 fw-bold text-white d-flex align-items-center justify-content-center shadow-sm fs-5 rounded-pill"
+                      disabled
+                    >
+                      Đang diễn ra
+                    </Button>
+                  );
+                } else {
+                  return (
+                    <Button
+                      href={event.registrationLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      variant="primary"
+                      className="w-100 py-3 fw-bold d-flex align-items-center justify-content-center shadow-sm fs-5 rounded-pill"
+                    >
+                      Đăng ký tham gia
+                    </Button>
+                  );
+                }
+              })()
             ) : (
               <div className="alert alert-secondary text-center py-3 fw-semibold">
                 Sự kiện này không yêu cầu đăng ký trước

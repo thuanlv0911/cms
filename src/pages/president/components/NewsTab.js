@@ -3,12 +3,31 @@ import { Card, Button, Table, Badge, Modal, Form, Alert } from 'react-bootstrap'
 import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import { newsService } from '../../../services/api';
 
-const NewsTab = ({ news, clubInfo, currentUser, onRefresh }) => {
+const NewsTab = ({ news, clubInfo, currentUser, semesters, onRefresh }) => {
   const [showModal, setShowModal] = useState(false);
+
+  const parseDateStr = (dateStr) => {
+    if (!dateStr) return null;
+    const parts = dateStr.split('/');
+    if (parts.length !== 3) return null;
+    const [day, month, year] = parts.map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  const getNewsTerm = (item) => {
+    if (item.term) return item.term;
+    if (!item.createdAt || !semesters || semesters.length === 0) return 'Summer2026';
+    const date = new Date(item.createdAt);
+    const matchedSem = semesters.find(sem => {
+      const start = parseDateStr(sem.startDate);
+      const end = parseDateStr(sem.endDate);
+      return start && end && date >= start && date <= end;
+    });
+    return matchedSem ? matchedSem.name : 'Summer2026';
+  };
   const [modalType, setModalType] = useState('create'); // 'create' or 'edit'
   const [selectedNews, setSelectedNews] = useState(null);
-  
-  // Form states
+
   const [title, setTitle] = useState('');
   const [image, setImage] = useState('');
   const [content, setContent] = useState('');
@@ -143,7 +162,6 @@ const NewsTab = ({ news, clubInfo, currentUser, onRefresh }) => {
               <Table hover className="align-middle mb-0">
                 <thead>
                   <tr>
-                    <th className="admin-table-header py-3 px-4" style={{ borderRadius: '8px 0 0 0' }}>Ảnh</th>
                     <th className="admin-table-header py-3 px-4">Tiêu đề tin tức</th>
                     <th className="admin-table-header py-3 px-4">Ngày tạo</th>
                     <th className="admin-table-header py-3 px-4">Học kỳ</th>
@@ -154,20 +172,11 @@ const NewsTab = ({ news, clubInfo, currentUser, onRefresh }) => {
                 <tbody>
                   {news.map((item) => (
                     <tr key={item.id}>
-                      <td className="py-3 px-4">
-                        <div style={{ width: '60px', height: '40px', overflow: 'hidden', borderRadius: '4px' }}>
-                          <img 
-                            src={item.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=100&auto=format&fit=crop'} 
-                            alt={item.title} 
-                            className="w-100 h-100 object-fit-cover"
-                          />
-                        </div>
-                      </td>
                       <td className="fw-bold py-3 px-4 text-dark">{item.title}</td>
                       <td className="py-3 px-4 text-muted small">
                         {new Date(item.createdAt).toLocaleDateString('vi-VN')}
                       </td>
-                      <td className="py-3 px-4 text-dark">{item.term || 'Fall2026'}</td>
+                      <td className="py-3 px-4 text-dark">{getNewsTerm(item)}</td>
                       <td className="py-3 px-4">
                         <div>
                           {getStatusBadge(item.status)}
@@ -217,13 +226,13 @@ const NewsTab = ({ news, clubInfo, currentUser, onRefresh }) => {
         <Form onSubmit={handleSubmit}>
           <Modal.Body className="px-4 py-3">
             {error && <Alert variant="danger">{error}</Alert>}
-            
+
             <Form.Group className="mb-3">
               <Form.Label className="fw-semibold text-dark">Tiêu đề tin tức</Form.Label>
-              <Form.Control 
-                type="text" 
+              <Form.Control
+                type="text"
                 placeholder="Nhập tiêu đề tin tức..."
-                value={title} 
+                value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
               />
@@ -231,10 +240,10 @@ const NewsTab = ({ news, clubInfo, currentUser, onRefresh }) => {
 
             <Form.Group className="mb-3">
               <Form.Label className="fw-semibold text-dark">Đường dẫn hình ảnh (URL)</Form.Label>
-              <Form.Control 
-                type="text" 
+              <Form.Control
+                type="text"
                 placeholder="Nhập URL ảnh minh họa (ví dụ: https://images.unsplash.com/photo-...)"
-                value={image} 
+                value={image}
                 onChange={(e) => setImage(e.target.value)}
                 required
               />
@@ -245,11 +254,11 @@ const NewsTab = ({ news, clubInfo, currentUser, onRefresh }) => {
 
             <Form.Group className="mb-3">
               <Form.Label className="fw-semibold text-dark">Nội dung bài viết</Form.Label>
-              <Form.Control 
-                as="textarea" 
+              <Form.Control
+                as="textarea"
                 rows={8}
                 placeholder="Nhập nội dung bài viết chi tiết..."
-                value={content} 
+                value={content}
                 onChange={(e) => setContent(e.target.value)}
                 required
               />
@@ -262,17 +271,17 @@ const NewsTab = ({ news, clubInfo, currentUser, onRefresh }) => {
             )}
           </Modal.Body>
           <Modal.Footer className="px-4 pb-4 border-0">
-            <Button 
-              variant="outline-secondary" 
+            <Button
+              variant="outline-secondary"
               onClick={() => setShowModal(false)}
               className="rounded-pill px-4"
               disabled={loading}
             >
               Hủy
             </Button>
-            <Button 
-              type="submit" 
-              variant="primary" 
+            <Button
+              type="submit"
+              variant="primary"
               className="rounded-pill px-4 btn-primary"
               disabled={loading}
             >

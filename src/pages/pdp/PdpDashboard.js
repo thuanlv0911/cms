@@ -201,7 +201,7 @@ const PdpDashboard = () => {
     <div className="d-flex min-vh-100 bg-light">
       <div className="admin-sidebar shadow-sm">
         <div>
-          <div 
+          <div
             className="admin-sidebar-brand d-flex flex-column align-items-center text-center pt-4"
             onClick={() => navigate('/')}
             style={{ cursor: 'pointer' }}
@@ -257,8 +257,7 @@ const PdpDashboard = () => {
           <div className="d-flex align-items-center overflow-hidden">
             <FaUserCircle size={35} className="text-secondary me-2 flex-shrink-0" />
             <div className="text-truncate" style={{ maxWidth: '140px' }}>
-              <div className="fw-semibold text-dark small text-truncate">{currentUser.fullName}</div>
-              <div className="text-muted small" style={{ fontSize: '0.7rem' }}>Cán bộ PDP</div>
+              <div className="fw-semibold text-dark small text-truncate">PDP Staff</div>
             </div>
           </div>
           <Button

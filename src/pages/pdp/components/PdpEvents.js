@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Table, Alert, Badge, Modal, Button, Row, Col, Form } from 'react-bootstrap';
-import { FaLock, FaTimesCircle, FaCalendarAlt, FaChevronLeft, FaChevronRight, FaExclamationCircle } from 'react-icons/fa';
+import { FaLock, FaChevronLeft, FaChevronRight, FaExclamationCircle } from 'react-icons/fa';
 import { eventService } from '../../../services/api';
 
 const PdpEvents = ({ fetchDashboardData }) => {
@@ -14,6 +14,7 @@ const PdpEvents = ({ fetchDashboardData }) => {
   const [actionLoading, setActionLoading] = useState(false);
   const [showRejectInput, setShowRejectInput] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
+  const [rejectType, setRejectType] = useState('rejected_slot');
 
   const fetchEvents = async () => {
     try {
@@ -95,7 +96,7 @@ const PdpEvents = ({ fetchDashboardData }) => {
   };
 
   const slotsDef = [
-    { slotNum: 1, timeRange: '09:00 - 11:00' },
+    { slotNum: 1, timeRange: '08:00 - 10:00' },
     { slotNum: 2, timeRange: '13:00 - 15:00' },
     { slotNum: 3, timeRange: '15:30 - 17:30' },
     { slotNum: 4, timeRange: '18:00 - 20:00' }
@@ -104,6 +105,7 @@ const PdpEvents = ({ fetchDashboardData }) => {
   const handleOpenDetailModal = (event) => {
     setSelectedEvent(event);
     setRejectReason('');
+    setRejectType('rejected_slot');
     setShowRejectInput(false);
     setShowModal(true);
   };
@@ -132,27 +134,7 @@ const PdpEvents = ({ fetchDashboardData }) => {
     }
   };
 
-  const handleCancelDefenseSlot = async (event) => {
-    if (window.confirm(`Bạn có chắc chắn muốn hủy lịch đặt bảo vệ của sự kiện "${event.title}"?`)) {
-      try {
-        setActionLoading(true);
-        await eventService.update(event.id, { defenseSlot: null });
-        await fetchEvents();
-        if (fetchDashboardData) {
-          await fetchDashboardData();
-        }
-      } catch (err) {
-        console.error('Lỗi khi hủy lịch bảo vệ:', err);
-        alert('Có lỗi xảy ra khi hủy lịch bảo vệ.');
-      } finally {
-        setActionLoading(false);
-      }
-    }
-  };
 
-  const handleReschedule = () => {
-    alert('Để đổi lịch bảo vệ, vui lòng liên hệ Chủ nhiệm CLB thực hiện đặt lại slot trống trên hệ thống.');
-  };
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -160,6 +142,12 @@ const PdpEvents = ({ fetchDashboardData }) => {
         return <Badge bg="success" className="px-3 py-2 fw-medium rounded-pill">Đã duyệt tổng</Badge>;
       case 'approved_to_defend':
         return <Badge bg="primary" className="px-3 py-2 fw-medium rounded-pill">Duyệt bảo vệ</Badge>;
+      case 'rejected_slot':
+        return <Badge bg="warning" className="text-dark px-3 py-2 fw-medium rounded-pill">Từ chối (Đổi lịch)</Badge>;
+      case 'rejected_content':
+        return <Badge bg="danger" className="px-3 py-2 fw-medium rounded-pill">Từ chối (Sửa nội dung)</Badge>;
+      case 'rejected_final':
+        return <Badge bg="dark" className="px-3 py-2 fw-medium rounded-pill">Từ chối hoàn toàn</Badge>;
       case 'rejected':
         return <Badge bg="danger" className="px-3 py-2 fw-medium rounded-pill">Từ chối</Badge>;
       default:
@@ -173,6 +161,12 @@ const PdpEvents = ({ fetchDashboardData }) => {
         return 'Đã duyệt tổng';
       case 'approved_to_defend':
         return 'Duyệt bảo vệ';
+      case 'rejected_slot':
+        return 'Từ chối (Đổi lịch)';
+      case 'rejected_content':
+        return 'Từ chối (Sửa nội dung)';
+      case 'rejected_final':
+        return 'Từ chối hoàn toàn';
       case 'rejected':
         return 'Từ chối';
       default:
@@ -189,9 +183,15 @@ const PdpEvents = ({ fetchDashboardData }) => {
     } else if (status === 'approved_to_defend') {
       bg = '#e8f0fe';
       color = '#1a73e8';
-    } else if (status === 'rejected') {
-      bg = '#fce8e6';
-      color = '#c5221f';
+    } else if (status === 'rejected_slot') {
+      bg = '#fff3cd';
+      color = '#856404';
+    } else if (status === 'rejected_content') {
+      bg = '#f8d7da';
+      color = '#721c24';
+    } else if (status === 'rejected_final' || status === 'rejected') {
+      bg = '#e2e3e5';
+      color = '#383d41';
     }
     return (
       <span 
@@ -304,23 +304,6 @@ const PdpEvents = ({ fetchDashboardData }) => {
                                   <div>
                                     {getCompactStatusBadge(matchedEvent.status)}
                                   </div>
-                                </div>
-
-                                <div className="mt-2 pt-2 border-top d-flex flex-column gap-1">
-                                  <span 
-                                    className="text-danger fw-semibold d-flex align-items-center" 
-                                    style={{ cursor: 'pointer', fontSize: '11px' }}
-                                    onClick={() => handleCancelDefenseSlot(matchedEvent)}
-                                  >
-                                    <FaTimesCircle className="me-1" size={11} /> Hủy lịch đặt
-                                  </span>
-                                  <span 
-                                    className="text-dark fw-semibold d-flex align-items-center" 
-                                    style={{ cursor: 'pointer', fontSize: '11px' }}
-                                    onClick={handleReschedule}
-                                  >
-                                    <FaCalendarAlt className="me-1" size={10} /> Đổi lịch bảo vệ
-                                  </span>
                                 </div>
                               </div>
                             ) : (
@@ -472,19 +455,59 @@ const PdpEvents = ({ fetchDashboardData }) => {
             )}
 
             {showRejectInput && (
-              <Form.Group className="mb-4 bg-light p-3 rounded border border-danger-subtle">
-                <Form.Label className="fw-bold text-danger d-flex align-items-center">
-                  <FaExclamationCircle className="me-2" /> Nhập lý do từ chối xét duyệt:
-                </Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  placeholder="Ghi rõ lý do tại sao không phê duyệt đề án sự kiện này..."
-                  value={rejectReason}
-                  onChange={(e) => setRejectReason(e.target.value)}
-                  className="border-danger-subtle"
-                />
-              </Form.Group>
+              <div className="mb-4 bg-light p-3 rounded border border-danger-subtle">
+                {selectedEvent.status === 'pending' && (
+                  <Form.Group className="mb-3">
+                    <Form.Label className="fw-bold text-dark">Lý do từ chối bảo vệ:</Form.Label>
+                    <div className="d-flex flex-column gap-2 ms-2">
+                      <Form.Check
+                        type="radio"
+                        label="Từ chối do trùng/bận Slot bảo vệ (Yêu cầu đổi Slot bảo vệ)"
+                        name="rejectTypeRadio"
+                        id="reject-slot"
+                        checked={rejectType === 'rejected_slot'}
+                        onChange={() => setRejectType('rejected_slot')}
+                      />
+                      <Form.Check
+                        type="radio"
+                        label="Từ chối do nội dung chưa đạt (Yêu cầu sửa nội dung sự kiện)"
+                        name="rejectTypeRadio"
+                        id="reject-content"
+                        checked={rejectType === 'rejected_content'}
+                        onChange={() => setRejectType('rejected_content')}
+                      />
+                      <Form.Check
+                        type="radio"
+                        label="Từ chối hoàn toàn (Huỷ bỏ đề xuất sự kiện này)"
+                        name="rejectTypeRadio"
+                        id="reject-final"
+                        checked={rejectType === 'rejected_final'}
+                        onChange={() => setRejectType('rejected_final')}
+                      />
+                    </div>
+                  </Form.Group>
+                )}
+
+                {selectedEvent.status === 'approved_to_defend' && (
+                  <div className="alert alert-warning py-2 small mb-3">
+                    <strong>Lưu ý:</strong> Đây là bước Duyệt tổng. Từ chối ở bước này sẽ hủy bỏ hoàn toàn sự kiện.
+                  </div>
+                )}
+
+                <Form.Group>
+                  <Form.Label className="fw-bold text-danger d-flex align-items-center">
+                    <FaExclamationCircle className="me-2" /> Nhập chi tiết lý do từ chối:
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    placeholder="Ghi rõ phản hồi chi tiết cho chủ nhiệm..."
+                    value={rejectReason}
+                    onChange={(e) => setRejectReason(e.target.value)}
+                    className="border-danger-subtle"
+                  />
+                </Form.Group>
+              </div>
             )}
 
             <div className="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
@@ -499,7 +522,7 @@ const PdpEvents = ({ fetchDashboardData }) => {
                     Đóng
                   </Button>
                   
-                  {selectedEvent.status !== 'approved' && selectedEvent.status !== 'rejected' && (
+                  {(selectedEvent.status === 'pending' || selectedEvent.status === 'approved_to_defend') && (
                     <>
                       <Button 
                         variant="danger" 
@@ -554,7 +577,8 @@ const PdpEvents = ({ fetchDashboardData }) => {
                         alert('Vui lòng nhập lý do từ chối!');
                         return;
                       }
-                      handleUpdateStatus('rejected', rejectReason.trim());
+                      const finalStatus = selectedEvent.status === 'approved_to_defend' ? 'rejected_final' : rejectType;
+                      handleUpdateStatus(finalStatus, rejectReason.trim());
                     }}
                     className="rounded-pill px-4"
                     disabled={actionLoading}

@@ -86,7 +86,7 @@ const PresidentDashboard = () => {
     try {
       setLoading(true);
       setError('');
-      
+
       if (!currentUser || !currentUser.clubId) {
         setLoading(false);
         return;
@@ -272,6 +272,7 @@ const PresidentDashboard = () => {
             news={news}
             clubInfo={clubInfo}
             currentUser={currentUser}
+            semesters={semesters}
             onRefresh={fetchData}
           />
         );
@@ -352,8 +353,7 @@ const PresidentDashboard = () => {
           <div className="d-flex align-items-center overflow-hidden">
             <FaUserCircle size={35} className="text-secondary me-2 flex-shrink-0" />
             <div className="text-truncate" style={{ maxWidth: '140px' }}>
-              <div className="fw-semibold text-dark small text-truncate">{currentUser.fullName}</div>
-              <div className="text-muted small" style={{ fontSize: '0.7rem' }}>Chủ nhiệm CLB</div>
+              <div className="fw-semibold text-dark small text-truncate">Chủ nhiệm</div>
             </div>
           </div>
           <Button

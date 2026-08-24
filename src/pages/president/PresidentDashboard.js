@@ -262,6 +262,7 @@ const PresidentDashboard = () => {
             isCreatingEvent={isCreatingEvent}
             setIsCreatingEvent={setIsCreatingEvent}
             onSubmitSuccess={handleSubmitEvent}
+            onRefresh={fetchData}
             loading={loading}
           />
         );

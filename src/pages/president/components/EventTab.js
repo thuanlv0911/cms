@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, Button, Table, Badge } from 'react-bootstrap';
 import { FaPlus, FaCalendarAlt } from 'react-icons/fa';
 import EventWizard from './EventWizard';
+import { eventService } from '../../../services/api';
 
 const EventTab = ({
   events,
@@ -10,8 +11,12 @@ const EventTab = ({
   isCreatingEvent,
   setIsCreatingEvent,
   onSubmitSuccess,
+  onRefresh,
   loading
 }) => {
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [editMode, setEditMode] = useState('full'); // 'full' or 'slot_only'
+
   const formatEventTimeRange = (startDateStr, endDateStr) => {
     if (!startDateStr || !endDateStr) return { timeRange: '', dateStr: '' };
     const start = new Date(startDateStr);
@@ -44,9 +49,12 @@ const EventTab = ({
     if (status === 'approved' || status === 'approved_to_defend') {
       badgeBg = 'success-subtle';
       badgeClass += 'text-success border-success-subtle';
-    } else if (status === 'rejected') {
+    } else if (status === 'rejected_final' || status === 'rejected' || status === 'rejected_content') {
       badgeBg = 'danger-subtle';
       badgeClass += 'text-danger border-danger-subtle';
+    } else if (status === 'rejected_slot') {
+      badgeBg = 'warning-subtle';
+      badgeClass += 'text-warning border-warning-subtle';
     } else {
       badgeBg = 'warning-subtle';
       badgeClass += 'text-warning border-warning-subtle';
@@ -66,14 +74,35 @@ const EventTab = ({
     if (status === 'approved') {
       return (
         <Badge bg="success-subtle" className="text-success border border-success-subtle px-3 py-2 fw-medium rounded-pill fs-7">
-          Đã duyệt
+          Đã duyệt tổng
         </Badge>
       );
     }
-    if (status === 'rejected') {
+    if (status === 'approved_to_defend') {
+      return (
+        <Badge bg="primary-subtle" className="text-primary border border-primary-subtle px-3 py-2 fw-medium rounded-pill fs-7">
+          Duyệt bảo vệ
+        </Badge>
+      );
+    }
+    if (status === 'rejected_slot') {
+      return (
+        <Badge bg="warning-subtle" className="text-warning border border-warning-subtle px-3 py-2 fw-medium rounded-pill fs-7">
+          Từ chối (Đổi lịch)
+        </Badge>
+      );
+    }
+    if (status === 'rejected_content') {
       return (
         <Badge bg="danger-subtle" className="text-danger border border-danger-subtle px-3 py-2 fw-medium rounded-pill fs-7">
-          Từ chối
+          Từ chối (Sửa ND)
+        </Badge>
+      );
+    }
+    if (status === 'rejected_final' || status === 'rejected') {
+      return (
+        <Badge bg="danger-subtle" className="text-danger border border-danger-subtle px-3 py-2 fw-medium rounded-pill fs-7">
+          Từ chối hoàn toàn
         </Badge>
       );
     }
@@ -84,14 +113,103 @@ const EventTab = ({
     );
   };
 
-  if (isCreatingEvent) {
+  const handleStartEdit = (event, mode) => {
+    setEditingEvent(event);
+    setEditMode(mode);
+  };
+
+  const handleEditSubmit = async (payload) => {
+    try {
+      // resubmitted events go back to pending
+      await eventService.update(editingEvent.id, {
+        ...payload,
+        status: 'pending',
+        pdpFeedback: ''
+      });
+      setEditingEvent(null);
+      if (onRefresh) {
+        await onRefresh();
+      } else {
+        onSubmitSuccess();
+      }
+      alert('Đã gửi lại yêu cầu phê duyệt sự kiện thành công!');
+    } catch (err) {
+      console.error('Lỗi khi cập nhật sự kiện:', err);
+      alert('Có lỗi xảy ra: ' + err.message);
+    }
+  };
+
+  const handleDeleteEvent = async (eventId) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa sự kiện này không?')) {
+      try {
+        await eventService.delete(eventId);
+        if (onRefresh) {
+          await onRefresh();
+        } else {
+          onSubmitSuccess();
+        }
+        alert('Đã xóa sự kiện thành công!');
+      } catch (err) {
+        console.error('Lỗi khi xóa sự kiện:', err);
+        alert('Không thể xóa sự kiện.');
+      }
+    }
+  };
+
+  const getActions = (event) => {
+    const status = event.status;
+    if (status === 'rejected_slot') {
+      return (
+        <Button 
+          variant="warning" 
+          size="sm" 
+          className="rounded-pill px-3 fw-semibold text-white btn-sm"
+          onClick={() => handleStartEdit(event, 'slot_only')}
+        >
+          Đổi lịch bảo vệ
+        </Button>
+      );
+    }
+    if (status === 'rejected_content') {
+      return (
+        <Button 
+          variant="primary" 
+          size="sm" 
+          className="rounded-pill px-3 fw-semibold btn-sm"
+          onClick={() => handleStartEdit(event, 'full')}
+        >
+          Sửa nội dung
+        </Button>
+      );
+    }
+    if (status === 'rejected_final' || status === 'rejected') {
+      return (
+        <Button 
+          variant="outline-danger" 
+          size="sm" 
+          className="rounded-pill px-3 fw-semibold btn-sm"
+          onClick={() => handleDeleteEvent(event.id)}
+        >
+          Xóa
+        </Button>
+      );
+    }
+    return <span className="text-muted small">-</span>;
+  };
+
+  if (isCreatingEvent || editingEvent) {
     return (
       <EventWizard
         clubInfo={clubInfo}
         currentUser={currentUser}
-        onCancel={() => setIsCreatingEvent(false)}
-        onSubmit={onSubmitSuccess}
+        onCancel={() => {
+          setIsCreatingEvent(false);
+          setEditingEvent(null);
+        }}
+        onSubmit={editingEvent ? handleEditSubmit : onSubmitSuccess}
         loading={loading}
+        eventToEdit={editingEvent}
+        editMode={editMode}
       />
     );
   }
@@ -123,7 +241,8 @@ const EventTab = ({
                   <th className="admin-table-header py-3 px-4">Thời gian tổ chức</th>
                   <th className="admin-table-header py-3 px-4">Địa điểm</th>
                   <th className="admin-table-header py-3 px-4" style={{ width: '220px' }}>Lịch bảo vệ đề án</th>
-                  <th className="admin-table-header py-3 px-4" style={{ borderRadius: '0 8px 0 0', width: '150px' }}>Duyệt tổng</th>
+                  <th className="admin-table-header py-3 px-4" style={{ width: '150px' }}>Trạng thái</th>
+                  <th className="admin-table-header py-3 px-4" style={{ borderRadius: '0 8px 0 0', width: '180px' }}>Hành động</th>
                 </tr>
               </thead>
               <tbody>
@@ -131,7 +250,14 @@ const EventTab = ({
                   const { timeRange, dateStr } = formatEventTimeRange(e.startDate, e.endDate);
                   return (
                     <tr key={e.id}>
-                      <td className="fw-bold py-3 px-4">{e.title}</td>
+                      <td className="py-3 px-4">
+                        <div className="fw-bold text-dark">{e.title}</div>
+                        {e.pdpFeedback && (
+                          <div className="text-danger small mt-1 italic">
+                            <strong>Phản hồi:</strong> {e.pdpFeedback}
+                          </div>
+                        )}
+                      </td>
                       <td className="py-3 px-4">
                         <div>
                           <div className="fw-semibold text-dark small">{timeRange}</div>
@@ -144,6 +270,9 @@ const EventTab = ({
                       </td>
                       <td className="py-3 px-4">
                         {getPublishStatusBadge(e.status)}
+                      </td>
+                      <td className="py-3 px-4">
+                        {getActions(e)}
                       </td>
                     </tr>
                   );

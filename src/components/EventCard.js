@@ -71,18 +71,35 @@ const EventCard = ({ event, truncate = false, showDetailButton = false }) => {
               Chi tiết
             </Button>
           )}
-          {event.registrationLink && (
-            <Button
-              variant="outline-dark"
-              className="flex-fill fw-semibold btn-sm d-flex align-items-center justify-content-center"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/events/${event.id}`);
-              }}
-            >
-              Đăng ký
-            </Button>
-          )}
+          {event.registrationLink && (() => {
+            const now = new Date();
+            const start = new Date(event.startDate);
+            const end = new Date(event.endDate);
+
+            let btnText = "Đăng ký";
+            let btnVariant = "outline-dark";
+
+            if (now >= end) {
+              btnText = "Đã kết thúc";
+              btnVariant = "outline-secondary";
+            } else if (now >= start) {
+              btnText = "Đang diễn ra";
+              btnVariant = "outline-warning";
+            }
+
+            return (
+              <Button
+                variant={btnVariant}
+                className="flex-fill fw-semibold btn-sm d-flex align-items-center justify-content-center"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/events/${event.id}`);
+                }}
+              >
+                {btnText}
+              </Button>
+            );
+          })()}
         </div>
       </Card.Body>
     </Card>

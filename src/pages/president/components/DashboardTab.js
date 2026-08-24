@@ -17,7 +17,7 @@ const DashboardTab = ({
         case 'approved':
           return (
             <Badge bg="success-subtle" className="text-success border border-success-subtle px-3 py-2 fw-medium rounded-pill fs-7">
-              Đã duyệt đăng tải
+              Đã duyệt tổng
             </Badge>
           );
         case 'approved_to_defend':
@@ -26,10 +26,23 @@ const DashboardTab = ({
               Duyệt bảo vệ
             </Badge>
           );
+        case 'rejected_slot':
+          return (
+            <Badge bg="warning-subtle" className="text-warning border border-warning-subtle px-3 py-2 fw-medium rounded-pill fs-7">
+              Từ chối (Đổi lịch)
+            </Badge>
+          );
+        case 'rejected_content':
+          return (
+            <Badge bg="danger-subtle" className="text-danger border border-danger-subtle px-3 py-2 fw-medium rounded-pill fs-7">
+              Từ chối (Sửa nội dung)
+            </Badge>
+          );
+        case 'rejected_final':
         case 'rejected':
           return (
             <Badge bg="danger-subtle" className="text-danger border border-danger-subtle px-3 py-2 fw-medium rounded-pill fs-7">
-              Từ chối
+              Từ chối hoàn toàn
             </Badge>
           );
         default:
@@ -64,7 +77,12 @@ const DashboardTab = ({
   };
 
   const getFeedbackText = (notif) => {
-    if (notif.status === 'rejected') {
+    if (
+      notif.status === 'rejected' ||
+      notif.status === 'rejected_slot' ||
+      notif.status === 'rejected_content' ||
+      notif.status === 'rejected_final'
+    ) {
       return <span className="text-danger fw-semibold">{notif.feedback}</span>;
     }
     return <span className="text-muted">-</span>;

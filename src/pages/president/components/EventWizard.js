@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row, Col, Card, Table, Button, Form } from 'react-bootstrap';
 import {
   FaPlus,
@@ -7,29 +7,235 @@ import {
   FaCheckCircle,
   FaTrash
 } from 'react-icons/fa';
+import { eventService } from '../../../services/api';
 
-const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => {
-  const [eventStep, setEventStep] = useState(1);
-  const [newEvent, setNewEvent] = useState({
-    title: '',
-    description: '',
-    expectedParticipants: '',
-    proposalDocsLink: '',
-    startDate: '',
-    endDate: '',
-    locationType: 'inside',
-    selectLocation: 'Sảnh tòa Alpha',
-    customLocation: '',
-    youtubeLink: '',
-    registrationLink: '',
-    sendEmail: false,
-    banner: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop',
-    agenda: [{ id: 'ag-init', time: '18:00', content: 'Đón tiếp người tham gia' }],
-    selectedDefenseSlot: null
+const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, eventToEdit, editMode }) => {
+  const [eventStep, setEventStep] = useState(() => {
+    return editMode === 'slot_only' ? 4 : 1;
+  });
+  const [newEvent, setNewEvent] = useState(() => {
+    if (eventToEdit) {
+      const mappedAgenda = eventToEdit.agenda ? eventToEdit.agenda.map(ag => {
+        const timePart = ag.time.includes('T') ? ag.time.split('T')[1] : ag.time;
+        return {
+          id: ag.id,
+          time: timePart,
+          content: ag.content
+        };
+      }) : [];
+
+      return {
+        title: eventToEdit.title || '',
+        description: eventToEdit.description || '',
+        expectedParticipants: eventToEdit.expectedParticipants || '',
+        proposalDocsLink: eventToEdit.proposalDocsLink || '',
+        startDate: eventToEdit.startDate || '',
+        endDate: eventToEdit.endDate || '',
+        locationType: eventToEdit.type === 'Sự kiện ngoài trường' ? 'outside' : 'inside',
+        selectLocation: eventToEdit.type === 'Sự kiện trong trường' ? eventToEdit.location : 'Sảnh tòa Alpha',
+        customLocation: eventToEdit.type === 'Sự kiện ngoài trường' ? eventToEdit.location : '',
+        youtubeLink: eventToEdit.youtubeLink || '',
+        registrationLink: eventToEdit.registrationLink || '',
+        sendEmail: eventToEdit.sendEmail || false,
+        banner: eventToEdit.banner || 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop',
+        agenda: mappedAgenda.length > 0 ? mappedAgenda : [{ id: 'ag-init', time: '18:00', content: 'Đón tiếp người tham gia' }],
+        selectedDefenseSlot: eventToEdit.defenseSlot || null
+      };
+    }
+
+    return {
+      title: '',
+      description: '',
+      expectedParticipants: '',
+      proposalDocsLink: '',
+      startDate: '',
+      endDate: '',
+      locationType: 'inside',
+      selectLocation: 'Sảnh tòa Alpha',
+      customLocation: '',
+      youtubeLink: '',
+      registrationLink: '',
+      sendEmail: false,
+      banner: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop',
+      agenda: [{ id: 'ag-init', time: '18:00', content: 'Đón tiếp người tham gia' }],
+      selectedDefenseSlot: null
+    };
   });
 
-  const [defenseDate, setDefenseDate] = useState('');
-  const [defenseSlotNum, setDefenseSlotNum] = useState('');
+  const [defenseDate, setDefenseDate] = useState(() => {
+    return eventToEdit && eventToEdit.defenseSlot ? eventToEdit.defenseSlot.isoDate : '';
+  });
+  const [defenseSlotNum, setDefenseSlotNum] = useState(() => {
+    return eventToEdit && eventToEdit.defenseSlot ? eventToEdit.defenseSlot.slot.toString() : '';
+  });
+  const [errors, setErrors] = useState({});
+  const [allEvents, setAllEvents] = useState([]);
+
+  useEffect(() => {
+    eventService.getAll()
+      .then(data => setAllEvents(data))
+      .catch(err => console.error("Lỗi khi tải danh sách sự kiện để kiểm tra slot:", err));
+  }, []);
+
+  const isValidUrl = (string) => {
+    try {
+      const url = new URL(string);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch (_) {
+      return false;
+    }
+  };
+
+  const getMinEventStartDate = () => {
+    const minDate = new Date();
+    minDate.setDate(minDate.getDate() + 7);
+    const yyyy = minDate.getFullYear();
+    const mm = String(minDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(minDate.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}T00:00`;
+  };
+
+  const validateStep = (stepNum) => {
+    const newErrors = {};
+
+    if (stepNum === 1) {
+      if (!newEvent.title.trim()) {
+        newErrors.title = 'Vui lòng nhập tên sự kiện!';
+      }
+      if (!newEvent.description.trim()) {
+        newErrors.description = 'Vui lòng nhập mô tả sự kiện!';
+      }
+      if (!newEvent.expectedParticipants || !newEvent.expectedParticipants.toString().trim()) {
+        newErrors.expectedParticipants = 'Vui lòng nhập số người tham gia dự kiến!';
+      } else if (!/^\d+$/.test(newEvent.expectedParticipants.toString().trim())) {
+        newErrors.expectedParticipants = 'Số lượng người tham gia phải là số nguyên dương (không chứa chữ hoặc ký tự đặc biệt)!';
+      } else if (parseInt(newEvent.expectedParticipants, 10) <= 0) {
+        newErrors.expectedParticipants = 'Số lượng người tham gia phải lớn hơn 0!';
+      } else if (parseInt(newEvent.expectedParticipants, 10) > 1000000) {
+        newErrors.expectedParticipants = 'Số lượng người tham gia dự kiến không được vượt quá 1.000.000 người!';
+      }
+      if (!newEvent.proposalDocsLink.trim()) {
+        newErrors.proposalDocsLink = 'Vui lòng nhập link Google Docs đề án!';
+      } else if (!isValidUrl(newEvent.proposalDocsLink.trim())) {
+        newErrors.proposalDocsLink = 'Đường dẫn không hợp lệ. Vui lòng nhập link URL (ví dụ: https://...)!';
+      }
+      if (newEvent.banner && newEvent.banner.trim() && !isValidUrl(newEvent.banner.trim())) {
+        newErrors.banner = 'Đường dẫn ảnh banner không hợp lệ!';
+      }
+    }
+
+    if (stepNum === 2) {
+      if (!newEvent.startDate) {
+        newErrors.startDate = 'Vui lòng nhập thời gian bắt đầu!';
+      } else {
+        const minStartStr = getMinEventStartDate();
+        if (new Date(newEvent.startDate) < new Date(minStartStr)) {
+          newErrors.startDate = 'Thời gian bắt đầu sự kiện phải cách ngày hiện tại ít nhất 7 ngày!';
+        }
+      }
+      if (!newEvent.endDate) {
+        newErrors.endDate = 'Vui lòng nhập thời gian kết thúc!';
+      }
+      if (newEvent.startDate && newEvent.endDate) {
+        if (new Date(newEvent.startDate) >= new Date(newEvent.endDate)) {
+          newErrors.endDate = 'Thời gian bắt đầu phải diễn ra trước thời gian kết thúc!';
+        }
+      }
+      if (newEvent.locationType === 'outside' && !newEvent.customLocation.trim()) {
+        newErrors.customLocation = 'Vui lòng nhập địa điểm tổ chức ngoài trường!';
+      }
+    }
+
+    if (stepNum === 3) {
+      const agendaErrors = {};
+      newEvent.agenda.forEach((ag, index) => {
+        const agErr = {};
+        if (!ag.time) {
+          agErr.time = 'Vui lòng chọn thời gian!';
+        } else {
+          if (newEvent.startDate && newEvent.endDate) {
+            const agDateTimeStr = newEvent.startDate.split('T')[0] + 'T' + ag.time;
+            const agDate = new Date(agDateTimeStr);
+            const start = new Date(newEvent.startDate);
+            const end = new Date(newEvent.endDate);
+            
+            if (agDate < start || agDate > end) {
+              const startHM = newEvent.startDate.includes('T') ? newEvent.startDate.split('T')[1] : '';
+              const endHM = newEvent.endDate.includes('T') ? newEvent.endDate.split('T')[1] : '';
+              agErr.time = `Thời gian phải nằm trong khoảng từ ${startHM} đến ${endHM}!`;
+            }
+          }
+        }
+        if (!ag.content.trim()) {
+          agErr.content = 'Vui lòng nhập nội dung hoạt động!';
+        }
+        if (Object.keys(agErr).length > 0) {
+          agendaErrors[index] = agErr;
+        }
+      });
+      if (Object.keys(agendaErrors).length > 0) {
+        newErrors.agenda = agendaErrors;
+      }
+    }
+
+    if (stepNum === 4) {
+      if (!newEvent.selectedDefenseSlot) {
+        newErrors.selectedDefenseSlot = 'Vui lòng chọn 1 slot lịch bảo vệ đề án!';
+      } else {
+        const slot = newEvent.selectedDefenseSlot.slot;
+        const dateStr = newEvent.selectedDefenseSlot.dateStr;
+        
+        const bookedEventsOnDate = allEvents.filter(e => 
+          e.defenseSlot && 
+          e.defenseSlot.dateStr === dateStr &&
+          (!eventToEdit || e.id !== eventToEdit.id)
+        );
+
+        if (slot === 4) {
+          newErrors.selectedDefenseSlot = 'Slot 4 chỉ dùng làm dự phòng và không thể đặt!';
+        } else if (bookedEventsOnDate.some(e => e.defenseSlot.slot === slot)) {
+          newErrors.selectedDefenseSlot = `Slot ${slot} vào ngày này đã được đăng ký bởi sự kiện khác!`;
+        } else if (slot === 3 && bookedEventsOnDate.some(e => e.defenseSlot.slot === 2)) {
+          newErrors.selectedDefenseSlot = 'Slot 3 bị khoá do Slot 2 vào ngày này đã được đăng ký!';
+        }
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleFieldChange = (field, value) => {
+    setNewEvent(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => {
+        const updated = { ...prev };
+        delete updated[field];
+        return updated;
+      });
+    }
+  };
+
+  const handleDateChange = (field, value) => {
+    setNewEvent(prev => ({ ...prev, [field]: value }));
+    setErrors(prev => {
+      const updated = { ...prev };
+      delete updated.startDate;
+      delete updated.endDate;
+      return updated;
+    });
+  };
+
+  const handleLocationTypeChange = (type) => {
+    setNewEvent(prev => ({ ...prev, locationType: type }));
+    if (errors.customLocation) {
+      setErrors(prev => {
+        const updated = { ...prev };
+        delete updated.customLocation;
+        return updated;
+      });
+    }
+  };
 
   const CAMPUS_LOCATIONS = [
     'Sảnh tòa Alpha',
@@ -47,7 +253,7 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
   ];
 
   const defenseSlotsDef = [
-    { slotNum: 1, timeRange: '09:00 - 11:00' },
+    { slotNum: 1, timeRange: '08:00 - 10:00' },
     { slotNum: 2, timeRange: '13:00 - 15:00' },
     { slotNum: 3, timeRange: '15:30 - 17:30' },
     { slotNum: 4, timeRange: '18:00 - 20:00' }
@@ -79,6 +285,14 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
         timeRange: slotDef.timeRange
       }
     }));
+
+    if (errors.selectedDefenseSlot) {
+      setErrors(prev => {
+        const updated = { ...prev };
+        delete updated.selectedDefenseSlot;
+        return updated;
+      });
+    }
   };
 
   const handleAddAgendaRow = () => {
@@ -93,6 +307,13 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
       ...prev,
       agenda: prev.agenda.map(ag => ag.id === id ? { ...ag, [field]: value } : ag)
     }));
+    if (errors.agenda) {
+      setErrors(prev => {
+        const updated = { ...prev };
+        delete updated.agenda;
+        return updated;
+      });
+    }
   };
 
   const handleDeleteAgendaRow = (id) => {
@@ -104,35 +325,29 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
       ...prev,
       agenda: prev.agenda.filter(ag => ag.id !== id)
     }));
+    if (errors.agenda) {
+      setErrors(prev => {
+        const updated = { ...prev };
+        delete updated.agenda;
+        return updated;
+      });
+    }
   };
 
   const handleNextStep = () => {
-    if (eventStep === 1) {
-      if (!newEvent.title.trim()) return alert('Vui lòng nhập tên sự kiện!');
-      if (!newEvent.description.trim()) return alert('Vui lòng nhập mô tả sự kiện!');
-      if (!newEvent.expectedParticipants) return alert('Vui lòng nhập số người tham gia dự kiến!');
-      if (!newEvent.proposalDocsLink.trim()) return alert('Vui lòng nhập link Google Docs đề án!');
+    if (validateStep(eventStep)) {
+      setEventStep(prev => prev + 1);
     }
-    if (eventStep === 2) {
-      if (!newEvent.startDate || !newEvent.endDate) return alert('Vui lòng nhập thời gian bắt đầu và kết thúc!');
-      if (new Date(newEvent.startDate) >= new Date(newEvent.endDate)) {
-        return alert('Thời gian bắt đầu phải diễn ra trước thời gian kết thúc!');
-      }
-      if (newEvent.locationType === 'outside' && !newEvent.customLocation.trim()) {
-        return alert('Vui lòng nhập địa điểm tổ chức ngoài trường!');
-      }
-    }
-    if (eventStep === 3) {
-      const hasEmptyAgenda = newEvent.agenda.some(ag => !ag.time || !ag.content.trim());
-      if (hasEmptyAgenda) return alert('Vui lòng điền đầy đủ thông tin các hàng trong chương trình!');
-    }
-    setEventStep(prev => prev + 1);
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (!newEvent.selectedDefenseSlot) {
-      return alert('Vui lòng chọn 1 slot lịch bảo vệ đề án!');
+    if (eventStep < 4) {
+      handleNextStep();
+      return;
+    }
+    if (!validateStep(4)) {
+      return;
     }
 
     const finalLocation = newEvent.locationType === 'inside'
@@ -172,7 +387,9 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
     <Card className="border-0 shadow-sm">
       <Card.Body className="p-4">
         <div className="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
-          <h4 className="fw-bold mb-0 text-dark">Đăng ký tổ chức Sự kiện</h4>
+          <h4 className="fw-bold mb-0 text-dark">
+            {eventToEdit ? (editMode === 'slot_only' ? 'Đăng ký lại lịch bảo vệ' : 'Chỉnh sửa thông tin Sự kiện') : 'Đăng ký tổ chức Sự kiện'}
+          </h4>
           <Button variant="outline-secondary" className="rounded-pill px-3" onClick={onCancel}>
             Quay lại danh sách
           </Button>
@@ -216,9 +433,12 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
                   type="text"
                   placeholder="Nhập tên sự kiện (VD: Workshop Generative AI, Giải bóng đá...)"
                   value={newEvent.title}
-                  onChange={(e) => setNewEvent(prev => ({ ...prev, title: e.target.value }))}
-                  required
+                  onChange={(e) => handleFieldChange('title', e.target.value)}
+                  isInvalid={!!errors.title}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.title}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group className="mb-3">
@@ -228,9 +448,12 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
                   rows={4}
                   placeholder="Mô tả tóm tắt nội dung, ý nghĩa của sự kiện..."
                   value={newEvent.description}
-                  onChange={(e) => setNewEvent(prev => ({ ...prev, description: e.target.value }))}
-                  required
+                  onChange={(e) => handleFieldChange('description', e.target.value)}
+                  isInvalid={!!errors.description}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.description}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Row className="g-3 mb-3">
@@ -238,25 +461,30 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
                   <Form.Group>
                     <Form.Label className="fw-semibold">Số lượng người tham gia dự kiến <span className="text-danger">*</span></Form.Label>
                     <Form.Control
-                      type="number"
-                      min="1"
+                      type="text"
                       placeholder="Ví dụ: 50, 100..."
                       value={newEvent.expectedParticipants}
-                      onChange={(e) => setNewEvent(prev => ({ ...prev, expectedParticipants: e.target.value }))}
-                      required
+                      onChange={(e) => handleFieldChange('expectedParticipants', e.target.value)}
+                      isInvalid={!!errors.expectedParticipants}
                     />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.expectedParticipants}
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label className="fw-semibold">Link Google Docs đề án <span className="text-danger">*</span></Form.Label>
                     <Form.Control
-                      type="url"
+                      type="text"
                       placeholder="Nhập đường dẫn Google Drive hoặc Docs chứa đề án sự kiện"
                       value={newEvent.proposalDocsLink}
-                      onChange={(e) => setNewEvent(prev => ({ ...prev, proposalDocsLink: e.target.value }))}
-                      required
+                      onChange={(e) => handleFieldChange('proposalDocsLink', e.target.value)}
+                      isInvalid={!!errors.proposalDocsLink}
                     />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.proposalDocsLink}
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
               </Row>
@@ -264,11 +492,15 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
               <Form.Group className="mb-3">
                 <Form.Label className="fw-semibold">Đường dẫn ảnh Banner sự kiện (Link ảnh)</Form.Label>
                 <Form.Control
-                  type="url"
+                  type="text"
                   placeholder="Nhập link ảnh banner sự kiện (Mặc định sẽ có ảnh mẫu nếu để trống)"
                   value={newEvent.banner}
-                  onChange={(e) => setNewEvent(prev => ({ ...prev, banner: e.target.value }))}
+                  onChange={(e) => handleFieldChange('banner', e.target.value)}
+                  isInvalid={!!errors.banner}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.banner}
+                </Form.Control.Feedback>
               </Form.Group>
             </div>
           )}
@@ -284,9 +516,13 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
                     <Form.Control
                       type="datetime-local"
                       value={newEvent.startDate}
-                      onChange={(e) => setNewEvent(prev => ({ ...prev, startDate: e.target.value }))}
-                      required
+                      onChange={(e) => handleDateChange('startDate', e.target.value)}
+                      isInvalid={!!errors.startDate}
+                      min={getMinEventStartDate()}
                     />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.startDate}
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
                 <Col md={6}>
@@ -295,9 +531,13 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
                     <Form.Control
                       type="datetime-local"
                       value={newEvent.endDate}
-                      onChange={(e) => setNewEvent(prev => ({ ...prev, endDate: e.target.value }))}
-                      required
+                      onChange={(e) => handleDateChange('endDate', e.target.value)}
+                      isInvalid={!!errors.endDate}
+                      min={newEvent.startDate || getMinEventStartDate()}
                     />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.endDate}
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
               </Row>
@@ -311,7 +551,7 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
                     label="Trong trường"
                     name="locationType"
                     checked={newEvent.locationType === 'inside'}
-                    onChange={() => setNewEvent(prev => ({ ...prev, locationType: 'inside' }))}
+                    onChange={() => handleLocationTypeChange('inside')}
                   />
                   <Form.Check
                     inline
@@ -319,7 +559,7 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
                     label="Ngoài trường"
                     name="locationType"
                     checked={newEvent.locationType === 'outside'}
-                    onChange={() => setNewEvent(prev => ({ ...prev, locationType: 'outside' }))}
+                    onChange={() => handleLocationTypeChange('outside')}
                   />
                 </div>
               </Form.Group>
@@ -343,9 +583,12 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
                     type="text"
                     placeholder="Nhập cụ thể địa chỉ nơi diễn ra sự kiện..."
                     value={newEvent.customLocation}
-                    onChange={(e) => setNewEvent(prev => ({ ...prev, customLocation: e.target.value }))}
-                    required
+                    onChange={(e) => handleFieldChange('customLocation', e.target.value)}
+                    isInvalid={!!errors.customLocation}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.customLocation}
+                  </Form.Control.Feedback>
                 </Form.Group>
               )}
             </div>
@@ -354,7 +597,7 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
           {eventStep === 3 && (
             <div>
               <div className="d-flex justify-content-between align-items-center mb-4">
-                <h5 className="fw-bold mb-0 text-orange">Bước 3:Chương trình chi tiết (Agenda)</h5>
+                <h5 className="fw-bold mb-0 text-orange">Bước 3: Chương trình chi tiết (Agenda)</h5>
                 <Button variant="primary" size="sm" className="btn-primary rounded-pill d-flex align-items-center" onClick={handleAddAgendaRow}>
                   <FaPlus className="me-1" /> Thêm hoạt động
                 </Button>
@@ -369,36 +612,49 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
                   </tr>
                 </thead>
                 <tbody>
-                  {newEvent.agenda.map((ag) => (
-                    <tr key={ag.id}>
-                      <td>
-                        <Form.Control
-                          type="time"
-                          value={ag.time}
-                          onChange={(e) => handleUpdateAgendaRow(ag.id, 'time', e.target.value)}
-                          required
-                        />
-                      </td>
-                      <td>
-                        <Form.Control
-                          type="text"
-                          placeholder="Nhập mô tả hoạt động..."
-                          value={ag.content}
-                          onChange={(e) => handleUpdateAgendaRow(ag.id, 'content', e.target.value)}
-                          required
-                        />
-                      </td>
-                      <td style={{ textAlign: 'center' }}>
-                        <Button
-                          variant="link"
-                          className="text-danger p-0"
-                          onClick={() => handleDeleteAgendaRow(ag.id)}
-                        >
-                          <FaTrash size={16} />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                  {newEvent.agenda.map((ag, index) => {
+                    const rowError = errors.agenda && errors.agenda[index];
+                    return (
+                      <tr key={ag.id}>
+                        <td>
+                          <Form.Control
+                            type="time"
+                            value={ag.time}
+                            onChange={(e) => handleUpdateAgendaRow(ag.id, 'time', e.target.value)}
+                            isInvalid={rowError && !!rowError.time}
+                          />
+                          {rowError && rowError.time && (
+                            <Form.Control.Feedback type="invalid">
+                              {rowError.time}
+                            </Form.Control.Feedback>
+                          )}
+                        </td>
+                        <td>
+                          <Form.Control
+                            type="text"
+                            placeholder="Nhập mô tả hoạt động..."
+                            value={ag.content}
+                            onChange={(e) => handleUpdateAgendaRow(ag.id, 'content', e.target.value)}
+                            isInvalid={rowError && !!rowError.content}
+                          />
+                          {rowError && rowError.content && (
+                            <Form.Control.Feedback type="invalid">
+                              {rowError.content}
+                            </Form.Control.Feedback>
+                          )}
+                        </td>
+                        <td style={{ textAlign: 'center' }}>
+                          <Button
+                            variant="link"
+                            className="text-danger p-0"
+                            onClick={() => handleDeleteAgendaRow(ag.id)}
+                          >
+                            <FaTrash size={16} />
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </Table>
             </div>
@@ -418,36 +674,77 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
                     setDefenseDate(e.target.value);
                     updateDefenseSlot(e.target.value, defenseSlotNum);
                   }}
-                  required
                 />
               </Form.Group>
 
               <Form.Group className="mb-4">
                 <Form.Label className="fw-semibold d-block mb-3">Chọn khung giờ Slot:</Form.Label>
                 <div className="d-flex flex-column gap-3">
-                  {defenseSlotsDef.map((s) => (
-                    <Form.Check
-                      key={s.slotNum}
-                      type="radio"
-                      id={`slot-radio-${s.slotNum}`}
-                      name="defenseSlotRadio"
-                      label={`Slot ${s.slotNum} (${s.timeRange})`}
-                      checked={parseInt(defenseSlotNum, 10) === s.slotNum}
-                      onChange={() => {
-                        setDefenseSlotNum(s.slotNum.toString());
-                        updateDefenseSlot(defenseDate, s.slotNum.toString());
-                      }}
-                      className="fs-6"
-                      style={{ cursor: 'pointer' }}
-                    />
-                  ))}
+                  {(() => {
+                    let dateStr = '';
+                    if (defenseDate) {
+                      const [year, month, day] = defenseDate.split('-');
+                      dateStr = `${day}/${month}/${year}`;
+                    }
+
+                    const bookedEventsOnDate = dateStr
+                      ? allEvents.filter(e => 
+                          e.defenseSlot && 
+                          e.defenseSlot.dateStr === dateStr && 
+                          (!eventToEdit || e.id !== eventToEdit.id)
+                        )
+                      : [];
+
+                    return defenseSlotsDef.map((s) => {
+                      let isDisabled = s.slotNum === 4;
+                      let labelNote = '';
+
+                      if (s.slotNum === 4) {
+                        labelNote = ' (Dự phòng - Khoá)';
+                      }
+
+                      const isBooked = bookedEventsOnDate.some(e => e.defenseSlot.slot === s.slotNum);
+                      if (isBooked) {
+                        isDisabled = true;
+                        labelNote = ' (Đã được đặt)';
+                      }
+
+                      if (s.slotNum === 3 && bookedEventsOnDate.some(e => e.defenseSlot.slot === 2)) {
+                        isDisabled = true;
+                        labelNote = ' (Khoá - Slot 2 đã được đặt)';
+                      }
+
+                      return (
+                        <Form.Check
+                          key={s.slotNum}
+                          type="radio"
+                          id={`slot-radio-${s.slotNum}`}
+                          name="defenseSlotRadio"
+                          label={`Slot ${s.slotNum} (${s.timeRange})${labelNote}`}
+                          checked={parseInt(defenseSlotNum, 10) === s.slotNum}
+                          disabled={isDisabled || !defenseDate}
+                          onChange={() => {
+                            setDefenseSlotNum(s.slotNum.toString());
+                            updateDefenseSlot(defenseDate, s.slotNum.toString());
+                          }}
+                          className={`fs-6 ${isDisabled ? 'text-muted' : ''}`}
+                          style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
+                        />
+                      );
+                    });
+                  })()}
                 </div>
+                {errors.selectedDefenseSlot && (
+                  <div className="text-danger small mt-2 fw-semibold">
+                    {errors.selectedDefenseSlot}
+                  </div>
+                )}
               </Form.Group>
             </div>
           )}
 
           <div className="d-flex justify-content-between mt-5 pt-3 border-top">
-            {eventStep > 1 ? (
+            {eventStep > 1 && editMode !== 'slot_only' ? (
               <Button
                 variant="secondary"
                 className="rounded-pill px-4 d-flex align-items-center"
@@ -480,7 +777,7 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading }) => 
                 type="submit"
                 disabled={loading}
               >
-                Gửi phê duyệt <FaCheckCircle className="ms-2" />
+                {eventToEdit ? 'Cập nhật & Gửi lại' : 'Gửi phê duyệt'} <FaCheckCircle className="ms-2" />
               </Button>
             )}
           </div>

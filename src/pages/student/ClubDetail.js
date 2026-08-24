@@ -69,7 +69,7 @@ const ClubDetail = () => {
                 alt={club.name}
                 className="w-100 h-100 object-fit-cover"
                 onError={(e) => {
-                  e.target.src = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&auto=format&fit=crop';
+                  e.target.src = 'https://images.unsplash.com/photo-1560421683-6856ea585c78?w=600&auto=format&fit=crop';
                 }}
               />
             </div>
@@ -112,7 +112,7 @@ const ClubDetail = () => {
               <p className="text-muted mb-0">Chưa có tin tức nào được đăng tải.</p>
             </div>
           ) : (
-            <Row xs={1} md={2} className="g-4 mt-2">
+            <Row xs={1} md={2} lg={3} className="g-4 mt-2">
               {news.map((item) => (
                 <Col key={item.id}>
                   <NewsCard news={item} truncate={false} buttonStyle="none" />
@@ -128,7 +128,7 @@ const ClubDetail = () => {
               <p className="text-muted mb-0">Hiện chưa có sự kiện nào đang diễn ra hoặc sắp tới.</p>
             </div>
           ) : (
-            <Row xs={1} md={2} className="g-4 mt-2">
+            <Row xs={1} md={2} lg={3} className="g-4 mt-2">
               {events.map((event) => (
                 <Col key={event.id}>
                   <EventCard event={event} truncate={false} showDetailButton={false} />

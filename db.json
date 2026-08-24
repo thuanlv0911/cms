@@ -347,15 +347,15 @@
       "title": "Giải đấu Ma Sói Mùa Thu 2026",
       "description": "Giải đấu trí tuệ kịch tính dành cho tất cả các bạn học sinh yêu thích trò chơi Ma Sói. Tìm ra người sống sót cuối cùng và nhận giải thưởng cực khủng!",
       "location": "Sảnh tòa Alpha",
-      "startDate": "2026-09-01T18:00",
-      "endDate": "2026-09-01T21:00",
+      "startDate": "2026-08-20T18:00",
+      "endDate": "2026-08-20T21:00",
       "type": "Sự kiện trong trường",
       "youtubeLink": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       "registrationLink": "https://forms.gle/boardgameWerewolf2026",
       "sendEmail": true,
       "status": "approved",
       "pdpFeedback": "Ý tưởng rất tốt, khuyến khích tổ chức.",
-      "hasReport": false,
+      "hasReport": true,
       "banner": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop",
       "agenda": [
         {
@@ -481,6 +481,7 @@
       "clubName": "FPTU BoardGame Club",
       "title": "Thông báo Tuyển Thành Viên Thế Hệ Mới Mùa Thu 2026",
       "content": "Chào đón học kỳ mới đầy năng động! FPTU BoardGame Club chính thức mở đơn đăng ký ứng tuyển thành viên mới cho các ban: Truyền thông, Sự kiện, Hậu cần và Chuyên môn. Hãy nhanh tay nộp đơn để tham gia vào đại gia đình vui vẻ này nhé!",
+      "image": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop",
       "createdAt": "2026-08-20T10:00:00Z",
       "status": "approved",
       "pdpFeedback": "Nội dung tốt, duyệt đăng tin tuyển thành viên."
@@ -491,6 +492,7 @@
       "clubName": "FEC - FPTU English Club",
       "title": "Khai giảng Câu lạc bộ Tiếng Anh đàm thoại định kỳ tuần này",
       "content": "Lịch sinh hoạt thường niên của CLB Tiếng Anh (FEC) sẽ diễn ra vào lúc 18h00 tối thứ Năm hàng tuần tại phòng 102 tòa Alpha. Rất hân hạnh chào đón các bạn sinh viên tới luyện nói tiếng Anh miễn phí và tự nhiên.",
+      "image": "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=800&auto=format&fit=crop",
       "createdAt": "2026-08-19T08:30:00Z",
       "status": "approved",
       "pdpFeedback": "Duyệt."
@@ -501,12 +503,40 @@
       "clubName": "FPTU BoardGame Club",
       "title": "Cập nhật nội quy phòng sinh hoạt CLB từ kỳ Fall 2026",
       "content": "Nhằm giữ gìn không gian chung sạch đẹp và bảo quản tốt các bộ BoardGame của CLB, Ban chủ nhiệm yêu cầu tất cả các thành viên thực hiện nghiêm túc việc dọn dẹp vệ sinh sau khi chơi và không mang đồ uống có màu vào phòng sinh hoạt.",
+      "image": "https://images.unsplash.com/photo-1606167668584-78701c57f13d?w=800&auto=format&fit=crop",
       "createdAt": "2026-08-20T15:00:00Z",
+      "status": "approved",
+      "pdpFeedback": "Đã duyệt."
+    },
+    {
+      "title": "test news",
+      "image": "http://localhost:3001/president",
+      "content": "test newss",
+      "clubId": "c3",
+      "clubName": "FPTU BoardGame Club",
       "status": "pending",
-      "pdpFeedback": ""
+      "pdpFeedback": "",
+      "createdAt": "2026-08-24T02:48:57.150Z",
+      "term": "Summer2026",
+      "id": "olrAbIi"
     }
   ],
-  "reports": [],
+  "reports": [
+    {
+      "eventId": "e1",
+      "eventTitle": "Giải đấu Ma Sói Mùa Thu 2026",
+      "clubId": "c3",
+      "clubName": "FPTU BoardGame Club",
+      "summary": "test bao cao",
+      "notes": "",
+      "evidenceLink": "http://localhost:3001/president",
+      "term": "Summer2026",
+      "status": "pending",
+      "pdpFeedback": "",
+      "submittedAt": "2026-08-24T02:49:19.834Z",
+      "id": 1
+    }
+  ],
   "semesters": [
     {
       "id": "sem_1",

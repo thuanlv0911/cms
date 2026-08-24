@@ -8,7 +8,6 @@ import {
   FaCalendarAlt,
   FaCalendarCheck,
   FaNewspaper,
-  FaBell,
   FaSignOutAlt,
   FaUserCircle,
   FaFileAlt
@@ -18,7 +17,6 @@ import PdpOverview from './components/PdpOverview';
 import PdpSemesters from './components/PdpSemesters';
 import PdpEvents from './components/PdpEvents';
 import PdpNews from './components/PdpNews';
-import PdpNotifications from './components/PdpNotifications';
 import PdpReports from './components/PdpReports';
 
 const PdpDashboard = () => {
@@ -137,8 +135,6 @@ const PdpDashboard = () => {
         return 'Quản lý Slots - Events';
       case 'news':
         return 'Quản lý Tin tức';
-      case 'notifications':
-        return 'Quản lý Thông báo';
       case 'reports':
         return 'Duyệt Báo cáo Hậu Sự kiện';
       default:
@@ -156,8 +152,6 @@ const PdpDashboard = () => {
         return 'Xét duyệt, quản lý lịch trình các sự kiện và slot đăng ký của CLB';
       case 'news':
         return 'Quản lý và xét duyệt tin tức, bài viết từ các câu luận bộ';
-      case 'notifications':
-        return 'Gửi và quản lý hệ thống thông báo tới các câu lạc bộ và sinh viên';
       case 'reports':
         return 'Xem xét và phê duyệt báo cáo kết quả sau khi tổ chức sự kiện từ các CLB';
       default:
@@ -196,10 +190,8 @@ const PdpDashboard = () => {
         return <PdpEvents fetchDashboardData={fetchDashboardData} />;
       case 'news':
         return <PdpNews />;
-      case 'notifications':
-        return <PdpNotifications />;
       case 'reports':
-        return <PdpReports />;
+        return <PdpReports allReports={allReports} onRefresh={fetchDashboardData} />;
       default:
         return null;
     }
@@ -252,14 +244,6 @@ const PdpDashboard = () => {
             </div>
 
             <div
-              className={`admin-sidebar-link d-flex align-items-center p-3 mb-2 ${activeTab === 'notifications' ? 'active' : ''}`}
-              onClick={() => setActiveTab('notifications')}
-            >
-              <FaBell className="me-3" size={18} />
-              <span>Thông báo</span>
-            </div>
-
-            <div
               className={`admin-sidebar-link d-flex align-items-center p-3 mb-2 ${activeTab === 'reports' ? 'active' : ''}`}
               onClick={() => setActiveTab('reports')}
             >
@@ -295,7 +279,6 @@ const PdpDashboard = () => {
             {activeTab === 'semesters' && <FaCalendarAlt size={22} />}
             {activeTab === 'slots-events' && <FaCalendarCheck size={22} />}
             {activeTab === 'news' && <FaNewspaper size={22} />}
-            {activeTab === 'notifications' && <FaBell size={22} />}
             {activeTab === 'reports' && <FaFileAlt size={22} />}
           </div>
           <div>

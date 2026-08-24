@@ -2,10 +2,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { clubService, eventService, newsService, semesterService } from '../../services/api';
+import { clubService, eventService, newsService, semesterService, reportService } from '../../services/api';
 import DashboardTab from './components/DashboardTab';
 import ClubTab from './components/ClubTab';
 import EventTab from './components/EventTab';
+import NewsTab from './components/NewsTab';
+import ReportTab from './components/ReportTab';
 import {
   FaTachometerAlt,
   FaUsers,
@@ -27,6 +29,7 @@ const PresidentDashboard = () => {
   const [members, setMembers] = useState([]);
   const [events, setEvents] = useState([]);
   const [news, setNews] = useState([]);
+  const [reports, setReports] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [activeSemesterName, setActiveSemesterName] = useState('');
   const [notifications, setNotifications] = useState([]);
@@ -55,6 +58,30 @@ const PresidentDashboard = () => {
     }
   };
 
+  const getEventTerm = (e) => {
+    if (e.term) return e.term;
+    if (!e.startDate || semesters.length === 0) return '';
+    const date = new Date(e.startDate);
+    const matchedSem = semesters.find(sem => {
+      const start = parseDateStr(sem.startDate);
+      const end = parseDateStr(sem.endDate);
+      return start && end && date >= start && date <= end;
+    });
+    return matchedSem ? matchedSem.name : '';
+  };
+
+  const getNewsTerm = (n) => {
+    if (n.term) return n.term;
+    if (!n.createdAt || semesters.length === 0) return '';
+    const date = new Date(n.createdAt);
+    const matchedSem = semesters.find(sem => {
+      const start = parseDateStr(sem.startDate);
+      const end = parseDateStr(sem.endDate);
+      return start && end && date >= start && date <= end;
+    });
+    return matchedSem ? matchedSem.name : '';
+  };
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -65,12 +92,13 @@ const PresidentDashboard = () => {
         return;
       }
 
-      const [clubsData, semestersData, membersData, eventsData, newsData] = await Promise.all([
+      const [clubsData, semestersData, membersData, eventsData, newsData, reportsData] = await Promise.all([
         clubService.getAll(),
         semesterService.getAll(),
         clubService.getMembers(currentUser.clubId),
         eventService.getByClub(currentUser.clubId),
-        newsService.getByClub(currentUser.clubId)
+        newsService.getByClub(currentUser.clubId),
+        reportService.getByClub(currentUser.clubId)
       ]);
 
       const currentClub = clubsData.find(c => c.id === currentUser.clubId);
@@ -90,6 +118,7 @@ const PresidentDashboard = () => {
       setMembers(membersData);
       setEvents(eventsData);
       setNews(newsData);
+      setReports(reportsData);
 
       const eventNotifications = eventsData
         .filter(e => e.pdpFeedback || e.status !== 'pending')
@@ -215,8 +244,8 @@ const PresidentDashboard = () => {
             currentUser={currentUser}
             activeSemesterName={activeSemesterName}
             membersCount={members.length}
-            eventsCount={events.filter(e => e.term === activeSemesterName).length}
-            newsCount={news.filter(n => n.term === activeSemesterName).length}
+            eventsCount={events.filter(e => e.status === 'approved' && getEventTerm(e) === activeSemesterName).length}
+            newsCount={news.filter(n => n.status === 'approved' && getNewsTerm(n) === activeSemesterName).length}
             notifications={notifications}
           />
         );
@@ -239,22 +268,23 @@ const PresidentDashboard = () => {
 
       case 'news':
         return (
-          <div className="bg-white p-4 rounded shadow-sm">
-            <h5 className="fw-bold mb-3 text-dark">Quản lý Tin tức</h5>
-            <Alert variant="info" className="mb-0">
-              <strong>Thông báo:</strong> Chức năng soạn thảo bài viết truyền thông, cập nhật tin tức câu lạc bộ dành cho Chủ nhiệm đang được chuẩn bị xây dựng. Nội dung cụ thể sẽ được cập nhật sau.
-            </Alert>
-          </div>
+          <NewsTab
+            news={news}
+            clubInfo={clubInfo}
+            currentUser={currentUser}
+            onRefresh={fetchData}
+          />
         );
 
       case 'reports':
         return (
-          <div className="bg-white p-4 rounded shadow-sm">
-            <h5 className="fw-bold mb-3 text-dark">Báo cáo hậu sự kiện</h5>
-            <Alert variant="info" className="mb-0">
-              <strong>Thông báo:</strong> Chức năng tạo và nộp báo cáo hậu sự kiện dành cho Chủ nhiệm đang được chuẩn bị xây dựng. Nội dung cụ thể sẽ được cập nhật sau.
-            </Alert>
-          </div>
+          <ReportTab
+            events={events}
+            reports={reports}
+            clubInfo={clubInfo}
+            currentUser={currentUser}
+            onRefresh={fetchData}
+          />
         );
 
       default:

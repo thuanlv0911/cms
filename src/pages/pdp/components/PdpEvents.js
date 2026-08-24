@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Table, Alert, Badge, Modal, Button, Row, Col, Form } from 'react-bootstrap';
-import { FaLock, FaTimesCircle, FaCalendarAlt, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaLock, FaTimesCircle, FaCalendarAlt, FaChevronLeft, FaChevronRight, FaExclamationCircle } from 'react-icons/fa';
 import { eventService } from '../../../services/api';
 
 const PdpEvents = ({ fetchDashboardData }) => {
@@ -12,6 +12,8 @@ const PdpEvents = ({ fetchDashboardData }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [showRejectInput, setShowRejectInput] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
 
   const fetchEvents = async () => {
     try {
@@ -101,14 +103,22 @@ const PdpEvents = ({ fetchDashboardData }) => {
 
   const handleOpenDetailModal = (event) => {
     setSelectedEvent(event);
+    setRejectReason('');
+    setShowRejectInput(false);
     setShowModal(true);
   };
 
-  const handleUpdateStatus = async (status) => {
+  const handleUpdateStatus = async (status, feedbackText = '') => {
     if (!selectedEvent) return;
     try {
       setActionLoading(true);
-      await eventService.update(selectedEvent.id, { status });
+      const updatePayload = { status };
+      if (status === 'rejected') {
+        updatePayload.pdpFeedback = feedbackText;
+      } else {
+        updatePayload.pdpFeedback = 'Đã duyệt.';
+      }
+      await eventService.update(selectedEvent.id, updatePayload);
       await fetchEvents();
       if (fetchDashboardData) {
         await fetchDashboardData();
@@ -452,48 +462,105 @@ const PdpEvents = ({ fetchDashboardData }) => {
               </div>
             </div>
 
+            {selectedEvent.pdpFeedback && (
+              <div className="mb-4">
+                <span className="text-muted small d-block mb-1">Phản hồi từ PDP hiện tại</span>
+                <Alert variant={selectedEvent.status === 'approved' || selectedEvent.status === 'approved_to_defend' ? 'success' : 'danger'} className="mb-0">
+                  {selectedEvent.pdpFeedback}
+                </Alert>
+              </div>
+            )}
+
+            {showRejectInput && (
+              <Form.Group className="mb-4 bg-light p-3 rounded border border-danger-subtle">
+                <Form.Label className="fw-bold text-danger d-flex align-items-center">
+                  <FaExclamationCircle className="me-2" /> Nhập lý do từ chối xét duyệt:
+                </Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  placeholder="Ghi rõ lý do tại sao không phê duyệt đề án sự kiện này..."
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  className="border-danger-subtle"
+                />
+              </Form.Group>
+            )}
+
             <div className="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-              <Button 
-                variant="outline-secondary" 
-                onClick={() => setShowModal(false)}
-                className="rounded-pill px-4"
-                disabled={actionLoading}
-              >
-                Đóng
-              </Button>
-              
-              {selectedEvent.status !== 'approved' && selectedEvent.status !== 'rejected' && (
+              {!showRejectInput ? (
                 <>
                   <Button 
-                    variant="danger" 
-                    onClick={() => handleUpdateStatus('rejected')}
+                    variant="outline-secondary" 
+                    onClick={() => setShowModal(false)}
                     className="rounded-pill px-4"
                     disabled={actionLoading}
                   >
-                    Từ chối
+                    Đóng
                   </Button>
                   
-                  {selectedEvent.status === 'pending' && (
-                    <Button 
-                      variant="primary" 
-                      onClick={() => handleUpdateStatus('approved_to_defend')}
-                      className="rounded-pill px-4 btn-primary"
-                      disabled={actionLoading}
-                    >
-                      Duyệt bảo vệ
-                    </Button>
+                  {selectedEvent.status !== 'approved' && selectedEvent.status !== 'rejected' && (
+                    <>
+                      <Button 
+                        variant="danger" 
+                        onClick={() => setShowRejectInput(true)}
+                        className="rounded-pill px-4"
+                        disabled={actionLoading}
+                      >
+                        Từ chối
+                      </Button>
+                      
+                      {selectedEvent.status === 'pending' && (
+                        <Button 
+                          variant="primary" 
+                          onClick={() => handleUpdateStatus('approved_to_defend')}
+                          className="rounded-pill px-4 btn-primary"
+                          disabled={actionLoading}
+                        >
+                          Duyệt bảo vệ
+                        </Button>
+                      )}
+                      
+                      {selectedEvent.status === 'approved_to_defend' && (
+                        <Button 
+                          variant="primary" 
+                          onClick={() => handleUpdateStatus('approved')}
+                          className="rounded-pill px-4 btn-primary"
+                          disabled={actionLoading}
+                        >
+                          Duyệt tổng
+                        </Button>
+                      )}
+                    </>
                   )}
-                  
-                  {selectedEvent.status === 'approved_to_defend' && (
-                    <Button 
-                      variant="primary" 
-                      onClick={() => handleUpdateStatus('approved')}
-                      className="rounded-pill px-4 btn-primary"
-                      disabled={actionLoading}
-                    >
-                      Duyệt tổng
-                    </Button>
-                  )}
+                </>
+              ) : (
+                <>
+                  <Button 
+                    variant="outline-secondary" 
+                    onClick={() => {
+                      setShowRejectInput(false);
+                      setRejectReason('');
+                    }}
+                    className="rounded-pill px-4"
+                    disabled={actionLoading}
+                  >
+                    Hủy
+                  </Button>
+                  <Button 
+                    variant="danger" 
+                    onClick={() => {
+                      if (!rejectReason.trim()) {
+                        alert('Vui lòng nhập lý do từ chối!');
+                        return;
+                      }
+                      handleUpdateStatus('rejected', rejectReason.trim());
+                    }}
+                    className="rounded-pill px-4"
+                    disabled={actionLoading}
+                  >
+                    Xác nhận Từ chối
+                  </Button>
                 </>
               )}
             </div>

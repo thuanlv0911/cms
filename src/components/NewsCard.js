@@ -16,10 +16,17 @@ const NewsCard = ({ news, truncate = false, buttonStyle = "link" }) => {
 
   return (
     <Card 
-      className="h-100 border-0 shadow-sm p-4 hover-shadow transition d-flex flex-column cursor-pointer"
+      className="h-100 border-0 shadow-sm hover-shadow transition d-flex flex-column cursor-pointer overflow-hidden"
       onClick={handleCardClick}
     >
-      <Card.Body className="d-flex flex-column p-0">
+      <div style={{ height: '180px', overflow: 'hidden' }}>
+        <img
+          src={news.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&auto=format&fit=crop'}
+          alt={news.title}
+          className="w-100 h-100 object-fit-cover"
+        />
+      </div>
+      <Card.Body className="d-flex flex-column p-4">
         <div className="d-flex justify-content-between align-items-center mb-3">
           {news.clubName && <Badge bg="secondary" className="me-2">{news.clubName}</Badge>}
           <span className="text-muted small d-flex align-items-center ms-auto">

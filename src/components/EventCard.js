@@ -36,6 +36,9 @@ const EventCard = ({ event, truncate = false, showDetailButton = false }) => {
           src={event.banner || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop'}
           alt={event.title}
           className="w-100 h-100 object-fit-cover"
+          onError={(e) => {
+            e.target.src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop';
+          }}
         />
       </div>
       <Card.Body className="d-flex flex-column p-4">

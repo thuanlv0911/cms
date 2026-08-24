@@ -333,6 +333,9 @@ const EventDetail = () => {
                 src={event.banner || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1000&auto=format&fit=crop'}
                 alt={event.title}
                 className="w-100 h-100 object-fit-cover"
+                onError={(e) => {
+                  e.target.src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1000&auto=format&fit=crop';
+                }}
               />
             </div>
             <Card.Body className="p-4">
@@ -381,11 +384,11 @@ const EventDetail = () => {
                     }}
                   >
                     <img
-                      src={club.image || `https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&auto=format&fit=crop`}
+                      src={club.image || `https://images.unsplash.com/photo-1560421683-6856ea585c78?w=600&auto=format&fit=crop`}
                       alt={club.name}
                       className="w-100 h-100 object-fit-cover"
                       onError={(e) => {
-                        e.target.src = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&auto=format&fit=crop';
+                        e.target.src = 'https://images.unsplash.com/photo-1560421683-6856ea585c78?w=600&auto=format&fit=crop';
                       }}
                     />
                   </div>

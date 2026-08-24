@@ -24,7 +24,7 @@ const ClubCard = ({ club, truncate = false }) => {
           alt={club.name}
           className="w-100 h-100 object-fit-cover"
           onError={(e) => {
-            e.target.src = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&auto=format&fit=crop';
+            e.target.src = 'https://images.unsplash.com/photo-1560421683-6856ea585c78?w=600&auto=format&fit=crop';
           }}
         />
       </div>

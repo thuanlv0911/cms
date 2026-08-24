@@ -115,7 +115,7 @@ const PdpEvents = ({ fetchDashboardData }) => {
     try {
       setActionLoading(true);
       const updatePayload = { status };
-      if (status === 'rejected') {
+      if (status.startsWith('rejected')) {
         updatePayload.pdpFeedback = feedbackText;
       } else {
         updatePayload.pdpFeedback = 'Đã duyệt.';
@@ -363,10 +363,7 @@ const PdpEvents = ({ fetchDashboardData }) => {
                 <span className="text-muted small d-block">Câu lạc bộ</span>
                 <span className="fw-semibold text-dark fs-6">{selectedEvent.clubName}</span>
               </Col>
-              <Col md={6}>
-                <span className="text-muted small d-block">Số lượng tối đa</span>
-                <span className="fw-semibold text-dark fs-6">{selectedEvent.expectedParticipants || 50} người</span>
-              </Col>
+
               <Col md={6}>
                 <span className="text-muted small d-block">Lịch bảo vệ đề án</span>
                 <span className="fw-semibold text-dark fs-6">

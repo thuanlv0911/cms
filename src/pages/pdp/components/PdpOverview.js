@@ -29,10 +29,10 @@ const PdpOverview = ({
     }
   };
 
-  const semesterEventsCount = allEvents.filter(e => e.term === activeSemName && e.status === 'approved').length;
-  const semesterNewsCount = allNews.filter(n => n.term === activeSemName && n.status === 'approved').length;
+  const semesterEventsCount = allEvents.filter(e => (!e.term || e.term === activeSemName) && e.status === 'approved').length;
+  const semesterNewsCount = allNews.filter(n => (!n.term || n.term === activeSemName) && n.status === 'approved').length;
   
-  const pendingEventsCount = allEvents.filter(e => e.status === 'pending').length;
+  const pendingEventsCount = allEvents.filter(e => e.status === 'pending' || e.status === 'approved_to_defend').length;
   const pendingNewsCount = allNews.filter(n => n.status === 'pending').length;
   const pendingReportsCount = allReports.filter(r => r.status === 'pending').length;
   const totalPendingRequests = pendingEventsCount + pendingNewsCount + pendingReportsCount;

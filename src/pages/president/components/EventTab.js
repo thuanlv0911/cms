@@ -252,9 +252,9 @@ const EventTab = ({
                     <tr key={e.id}>
                       <td className="py-3 px-4">
                         <div className="fw-bold text-dark">{e.title}</div>
-                        {e.pdpFeedback && (
+                        {e.pdpFeedback && (e.status === 'rejected_slot' || e.status === 'rejected_content' || e.status === 'rejected_final' || e.status === 'rejected') && (
                           <div className="text-danger small mt-1 italic">
-                            <strong>Phản hồi:</strong> {e.pdpFeedback}
+                            <strong>Lý do từ chối:</strong> {e.pdpFeedback}
                           </div>
                         )}
                       </td>

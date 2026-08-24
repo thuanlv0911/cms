@@ -27,7 +27,6 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
       return {
         title: eventToEdit.title || '',
         description: eventToEdit.description || '',
-        expectedParticipants: eventToEdit.expectedParticipants || '',
         proposalDocsLink: eventToEdit.proposalDocsLink || '',
         startDate: eventToEdit.startDate || '',
         endDate: eventToEdit.endDate || '',
@@ -46,7 +45,6 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
     return {
       title: '',
       description: '',
-      expectedParticipants: '',
       proposalDocsLink: '',
       startDate: '',
       endDate: '',
@@ -105,15 +103,7 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
       if (!newEvent.description.trim()) {
         newErrors.description = 'Vui lòng nhập mô tả sự kiện!';
       }
-      if (!newEvent.expectedParticipants || !newEvent.expectedParticipants.toString().trim()) {
-        newErrors.expectedParticipants = 'Vui lòng nhập số người tham gia dự kiến!';
-      } else if (!/^\d+$/.test(newEvent.expectedParticipants.toString().trim())) {
-        newErrors.expectedParticipants = 'Số lượng người tham gia phải là số nguyên dương (không chứa chữ hoặc ký tự đặc biệt)!';
-      } else if (parseInt(newEvent.expectedParticipants, 10) <= 0) {
-        newErrors.expectedParticipants = 'Số lượng người tham gia phải lớn hơn 0!';
-      } else if (parseInt(newEvent.expectedParticipants, 10) > 1000000) {
-        newErrors.expectedParticipants = 'Số lượng người tham gia dự kiến không được vượt quá 1.000.000 người!';
-      }
+
       if (!newEvent.proposalDocsLink.trim()) {
         newErrors.proposalDocsLink = 'Vui lòng nhập link Google Docs đề án!';
       } else if (!isValidUrl(newEvent.proposalDocsLink.trim())) {
@@ -151,6 +141,36 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
       }
       if (newEvent.locationType === 'outside' && !newEvent.customLocation.trim()) {
         newErrors.customLocation = 'Vui lòng nhập địa điểm tổ chức ngoài trường!';
+      }
+
+      if (newEvent.startDate && newEvent.endDate && !newErrors.startDate && !newErrors.endDate) {
+        const proposedLocation = newEvent.locationType === 'inside'
+          ? newEvent.selectLocation
+          : newEvent.customLocation.trim();
+
+        if (proposedLocation) {
+          const S_new = new Date(newEvent.startDate);
+          const E_new = new Date(newEvent.endDate);
+
+          const conflictEvent = allEvents.find(e => {
+            if (eventToEdit && e.id === eventToEdit.id) return false;
+            if (e.status === 'rejected' || e.status === 'rejected_final') return false;
+            if (!e.location || e.location.trim().toLowerCase() !== proposedLocation.toLowerCase()) return false;
+
+            const S_exist = new Date(e.startDate);
+            const E_exist = new Date(e.endDate);
+            return S_new < E_exist && S_exist < E_new;
+          });
+
+          if (conflictEvent) {
+            const errMsg = `Địa điểm này đã được đăng ký bởi sự kiện "${conflictEvent.title}" trong khung giờ này!`;
+            if (newEvent.locationType === 'inside') {
+              newErrors.selectLocation = errMsg;
+            } else {
+              newErrors.customLocation = errMsg;
+            }
+          }
+        }
       }
     }
 
@@ -367,7 +387,7 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
       clubName: clubInfo ? clubInfo.name : 'CLB của tôi',
       title: newEvent.title.trim(),
       description: newEvent.description.trim(),
-      expectedParticipants: parseInt(newEvent.expectedParticipants, 10),
+      expectedParticipants: 0,
       proposalDocsLink: newEvent.proposalDocsLink.trim(),
       location: finalLocation,
       startDate: newEvent.startDate,
@@ -465,22 +485,7 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
               </Form.Group>
 
               <Row className="g-3 mb-3">
-                <Col md={6}>
-                  <Form.Group>
-                    <Form.Label className="fw-semibold">Số lượng người tham gia dự kiến <span className="text-danger">*</span></Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Ví dụ: 50, 100..."
-                      value={newEvent.expectedParticipants}
-                      onChange={(e) => handleFieldChange('expectedParticipants', e.target.value)}
-                      isInvalid={!!errors.expectedParticipants}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      {errors.expectedParticipants}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
+                <Col md={12}>
                   <Form.Group>
                     <Form.Label className="fw-semibold">Link Google Docs đề án <span className="text-danger">*</span></Form.Label>
                     <Form.Control
@@ -610,12 +615,23 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
                   <Form.Label className="fw-semibold">Chọn địa điểm trong trường <span className="text-danger">*</span></Form.Label>
                   <Form.Select
                     value={newEvent.selectLocation}
-                    onChange={(e) => setNewEvent(prev => ({ ...prev, selectLocation: e.target.value }))}
+                    onChange={(e) => {
+                      setNewEvent(prev => ({ ...prev, selectLocation: e.target.value }));
+                      setErrors(prev => {
+                        const updated = { ...prev };
+                        delete updated.selectLocation;
+                        return updated;
+                      });
+                    }}
+                    isInvalid={!!errors.selectLocation}
                   >
                     {CAMPUS_LOCATIONS.map((loc, idx) => (
                       <option key={idx} value={loc}>{loc}</option>
                     ))}
                   </Form.Select>
+                  <Form.Control.Feedback type="invalid">
+                    {errors.selectLocation}
+                  </Form.Control.Feedback>
                 </Form.Group>
               ) : (
                 <Form.Group className="mb-3">

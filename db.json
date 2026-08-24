@@ -419,6 +419,76 @@
           "content": "Q&A và bế mạc workshop"
         }
       ]
+    },
+    {
+      "clubId": "c1",
+      "clubName": "Color Team",
+      "title": "test event color",
+      "description": "test event",
+      "expectedParticipants": 40,
+      "proposalDocsLink": "http://localhost:3001/president",
+      "location": "Sảnh tòa Alpha",
+      "startDate": "2026-08-31T15:20",
+      "endDate": "2026-08-31T18:20",
+      "type": "Sự kiện trong trường",
+      "youtubeLink": "",
+      "registrationLink": "http://localhost:3001/president",
+      "sendEmail": false,
+      "banner": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop",
+      "agenda": [
+        {
+          "id": "ag-1787559629181-0",
+          "time": "2026-08-31T18:00",
+          "content": "Đón tiếp người tham gia"
+        }
+      ],
+      "defenseSlot": {
+        "dateStr": "24/08/2026",
+        "isoDate": "2026-08-24",
+        "dayName": "Thứ Hai",
+        "slot": 2,
+        "timeRange": "13:00 - 15:00"
+      },
+      "status": "approved",
+      "pdpFeedback": "Đã duyệt.",
+      "hasReport": false,
+      "term": "Summer2026",
+      "id": "CveyUdY"
+    },
+    {
+      "clubId": "c1",
+      "clubName": "Color Team",
+      "title": "test 2",
+      "description": "test",
+      "expectedParticipants": 0,
+      "proposalDocsLink": "http://localhost:3001/president",
+      "location": "Sảnh tòa Beta",
+      "startDate": "2026-08-31T15:25",
+      "endDate": "2026-08-31T18:25",
+      "type": "Sự kiện trong trường",
+      "youtubeLink": "",
+      "registrationLink": "http://localhost:3001/president",
+      "sendEmail": false,
+      "banner": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop",
+      "agenda": [
+        {
+          "id": "ag-1787559928275-0",
+          "time": "2026-08-31T18:00",
+          "content": "Đón tiếp người tham gia"
+        }
+      ],
+      "defenseSlot": {
+        "dateStr": "24/08/2026",
+        "isoDate": "2026-08-24",
+        "dayName": "Thứ Hai",
+        "slot": 1,
+        "timeRange": "08:00 - 10:00"
+      },
+      "status": "rejected_slot",
+      "pdpFeedback": "Trùng lịch slot bảo vệ, vui lòng chọn slot khác.",
+      "hasReport": false,
+      "term": "Summer2026",
+      "id": "qhK4XiU"
     }
   ],
   "news": [

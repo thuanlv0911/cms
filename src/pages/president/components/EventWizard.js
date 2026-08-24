@@ -119,6 +119,14 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
       } else if (!isValidUrl(newEvent.proposalDocsLink.trim())) {
         newErrors.proposalDocsLink = 'Đường dẫn không hợp lệ. Vui lòng nhập link URL (ví dụ: https://...)!';
       }
+      if (!newEvent.registrationLink || !newEvent.registrationLink.trim()) {
+        newErrors.registrationLink = 'Vui lòng nhập link Form đăng ký tham gia!';
+      } else if (!isValidUrl(newEvent.registrationLink.trim())) {
+        newErrors.registrationLink = 'Đường dẫn không hợp lệ. Vui lòng nhập link URL (ví dụ: https://...)!';
+      }
+      if (newEvent.youtubeLink && newEvent.youtubeLink.trim() && !isValidUrl(newEvent.youtubeLink.trim())) {
+        newErrors.youtubeLink = 'Đường dẫn YouTube không hợp lệ!';
+      }
       if (newEvent.banner && newEvent.banner.trim() && !isValidUrl(newEvent.banner.trim())) {
         newErrors.banner = 'Đường dẫn ảnh banner không hợp lệ!';
       }
@@ -484,6 +492,39 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
                     />
                     <Form.Control.Feedback type="invalid">
                       {errors.proposalDocsLink}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row className="g-3 mb-3">
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label className="fw-semibold">Link Form đăng ký tham gia <span className="text-danger">*</span></Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Nhập link Google Forms hoặc forms đăng ký..."
+                      value={newEvent.registrationLink}
+                      onChange={(e) => handleFieldChange('registrationLink', e.target.value)}
+                      isInvalid={!!errors.registrationLink}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.registrationLink}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label className="fw-semibold">Link YouTube truyền thông (nếu có)</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Nhập link video giới thiệu hoặc trực tiếp..."
+                      value={newEvent.youtubeLink}
+                      onChange={(e) => handleFieldChange('youtubeLink', e.target.value)}
+                      isInvalid={!!errors.youtubeLink}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.youtubeLink}
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Col>

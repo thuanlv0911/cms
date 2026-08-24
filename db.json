@@ -419,41 +419,6 @@
           "content": "Q&A và bế mạc workshop"
         }
       ]
-    },
-    {
-      "clubId": "c1",
-      "clubName": "Color Team",
-      "title": "test event color",
-      "description": "test event color",
-      "expectedParticipants": 60,
-      "proposalDocsLink": "http://localhost:3001/president",
-      "location": "Sảnh tòa Alpha",
-      "startDate": "2026-08-31T15:42",
-      "endDate": "2026-08-31T17:42",
-      "type": "Sự kiện trong trường",
-      "youtubeLink": "",
-      "registrationLink": "",
-      "sendEmail": false,
-      "banner": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop",
-      "agenda": [
-        {
-          "id": "ag-1787557718413-0",
-          "time": "2026-08-31T16:00",
-          "content": "wel"
-        }
-      ],
-      "defenseSlot": {
-        "dateStr": "24/08/2026",
-        "isoDate": "2026-08-24",
-        "dayName": "Thứ Hai",
-        "slot": 2,
-        "timeRange": "13:00 - 15:00"
-      },
-      "status": "pending",
-      "pdpFeedback": "",
-      "hasReport": false,
-      "term": "Summer2026",
-      "id": "zaFaEbV"
     }
   ],
   "news": [

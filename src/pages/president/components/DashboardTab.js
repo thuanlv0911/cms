@@ -164,7 +164,7 @@ const DashboardTab = ({
                     <th className="admin-table-header py-3 px-4" style={{ borderRadius: '8px 0 0 0', width: '120px' }}>Loại</th>
                     <th className="admin-table-header py-3 px-4">Tên yêu cầu</th>
                     <th className="admin-table-header py-3 px-4" style={{ width: '180px' }}>Trạng thái</th>
-                    <th className="admin-table-header py-3 px-4" style={{ borderRadius: '0 8px 0 0' }}>Phản hồi từ PDP</th>
+                    <th className="admin-table-header py-3 px-4" style={{ borderRadius: '0 8px 0 0' }}>Lý do từ chối (nếu có)</th>
                   </tr>
                 </thead>
                 <tbody>

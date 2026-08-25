@@ -34,8 +34,8 @@ const getActiveSemesterName = async () => {
 };
 
 export const authService = {
-  login: async (username, password) => {
-    const data = await fetch(`${BASE_URL}/users?username=${username}&password=${password}`);
+  login: async (email, password) => {
+    const data = await fetch(`${BASE_URL}/users?email=${email}&password=${password}`);
     return handleResponse(data);
   },
   

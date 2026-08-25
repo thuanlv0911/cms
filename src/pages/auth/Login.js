@@ -1,11 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Alert, InputGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +33,7 @@ const Login = () => {
     setError('');
     setLoading(true);
 
-    const res = await login(username, password);
+    const res = await login(email, password);
     setLoading(false);
 
     if (res.success) {
@@ -62,26 +64,34 @@ const Login = () => {
               {error && <Alert variant="danger">{error}</Alert>}
 
               <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="formBasicUsername">
-                  <Form.Label className="fw-semibold">Tên đăng nhập</Form.Label>
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                  <Form.Label className="fw-semibold">Email</Form.Label>
                   <Form.Control
-                    type="text"
-                    placeholder="Nhập tên đăng nhập (VD: admin, pdp, president1...)"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    type="email"
+                    placeholder="Nhập email (VD: student1@fpt.edu.vn)"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </Form.Group>
 
                 <Form.Group className="mb-4" controlId="formBasicPassword">
                   <Form.Label className="fw-semibold">Mật khẩu</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Nhập mật khẩu"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
+                  <InputGroup>
+                    <Form.Control
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Nhập mật khẩu"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                    <InputGroup.Text
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{ cursor: 'pointer', backgroundColor: 'transparent' }}
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </InputGroup.Text>
+                  </InputGroup>
                 </Form.Group>
 
                 <Button
@@ -94,13 +104,17 @@ const Login = () => {
                 </Button>
               </Form>
 
+              <div className="mt-3 text-center small">
+                Chưa có tài khoản? <span className="text-primary fw-semibold" style={{ cursor: 'pointer' }} onClick={() => navigate('/register')}>Đăng ký ngay</span>
+              </div>
+
               <div className="mt-4 pt-3 border-top text-center text-muted small">
-                <p className="mb-1"><strong>Tài khoản Demo gợi ý:</strong></p>
+                <p className="mb-1"><strong>Tài khoản:</strong></p>
                 <div className="text-start bg-light p-2 rounded">
-                  <div>• Admin: <code>admin</code> / <code>123</code></div>
-                  <div>• Phòng PDP: <code>pdp</code> / <code>123</code></div>
-                  <div>• Chủ nhiệm: <code>president1</code> / <code>123</code></div>
-                  <div>• Sinh viên: <code>student1</code> / <code>123</code></div>
+                  <div>Admin: <code>admin@fpt.edu.vn</code> / <code>123</code></div>
+                  <div>Phòng PDP: <code>pdp@fpt.edu.vn</code> / <code>123</code></div>
+                  <div>Chủ nhiệm: <code>president.bg@fpt.edu.vn</code> / <code>123</code></div>
+                  <div>Sinh viên: <code>student1@fpt.edu.vn</code> / <code>123</code></div>
                 </div>
               </div>
             </Card.Body>

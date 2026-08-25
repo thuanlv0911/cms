@@ -36,7 +36,7 @@ const NewsList = () => {
         <Col md={6}>
           <Form.Control
             type="text"
-            placeholder="🔍 Tìm kiếm tin tức, câu lạc bộ..."
+            placeholder="Tìm kiếm tin tức, câu lạc bộ..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="shadow-sm p-3 rounded-pill border-0"

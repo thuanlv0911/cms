@@ -56,7 +56,7 @@ const ClubList = () => {
         <Col md={6}>
           <Form.Control
             type="text"
-            placeholder="🔍 Tìm kiếm câu lạc bộ theo tên..."
+            placeholder="Tìm kiếm câu lạc bộ theo tên..."
             value={searchTerm}
             onChange={handleSearchChange}
             className="shadow-sm p-3 rounded-pill border-0"
@@ -71,13 +71,13 @@ const ClubList = () => {
           </div>
         </div>
       ) : (
-        <Tabs 
-          activeKey={activeTab} 
+        <Tabs
+          activeKey={activeTab}
           onSelect={(k) => {
             setActiveTab(k);
             setActivePage(1);
           }}
-          id="club-tabs" 
+          id="club-tabs"
           className="mb-4 justify-content-center fw-semibold custom-tabs"
         >
           {categories.map((cat) => {
@@ -102,14 +102,14 @@ const ClubList = () => {
                         ))
                       )}
                     </Row>
-                    
+
                     {totalPages > 1 && (
                       <Pagination className="justify-content-center mt-5">
                         <Pagination.Prev disabled={activePage === 1} onClick={() => setActivePage(activePage - 1)} />
                         {[...Array(totalPages)].map((_, i) => (
-                          <Pagination.Item 
-                            key={i + 1} 
-                            active={i + 1 === activePage} 
+                          <Pagination.Item
+                            key={i + 1}
+                            active={i + 1 === activePage}
                             onClick={() => setActivePage(i + 1)}
                           >
                             {i + 1}

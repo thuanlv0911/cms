@@ -712,7 +712,6 @@
       "type": "Sự kiện trong trường",
       "youtubeLink": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       "registrationLink": "https://forms.gle/boardgameWerewolf2026",
-      "sendEmail": true,
       "status": "approved",
       "pdpFeedback": "Ý tưởng rất tốt, khuyến khích tổ chức.",
       "hasReport": true,
@@ -752,7 +751,6 @@
       "type": "Sự kiện trong trường",
       "youtubeLink": "",
       "registrationLink": "https://forms.gle/aiWorkshop2026",
-      "sendEmail": false,
       "status": "approved",
       "pdpFeedback": "Duyệt. Rất thiết thực cho sinh viên IT.",
       "hasReport": false,
@@ -785,7 +783,6 @@
       "clubName": "Color Team",
       "title": "test event color",
       "description": "test event",
-      "expectedParticipants": 40,
       "proposalDocsLink": "http://localhost:3001/president",
       "location": "Sảnh tòa Alpha",
       "startDate": "2026-08-31T15:20",
@@ -793,7 +790,6 @@
       "type": "Sự kiện trong trường",
       "youtubeLink": "",
       "registrationLink": "http://localhost:3001/president",
-      "sendEmail": false,
       "banner": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop",
       "agenda": [
         {
@@ -820,7 +816,6 @@
       "clubName": "Color Team",
       "title": "test 2",
       "description": "test",
-      "expectedParticipants": 0,
       "proposalDocsLink": "http://localhost:3001/president",
       "location": "Sảnh tòa Beta",
       "startDate": "2026-08-31T15:25",
@@ -828,7 +823,6 @@
       "type": "Sự kiện trong trường",
       "youtubeLink": "",
       "registrationLink": "http://localhost:3001/president",
-      "sendEmail": false,
       "banner": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop",
       "agenda": [
         {

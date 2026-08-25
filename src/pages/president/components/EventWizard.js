@@ -35,7 +35,6 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
         customLocation: eventToEdit.type === 'Sự kiện ngoài trường' ? eventToEdit.location : '',
         youtubeLink: eventToEdit.youtubeLink || '',
         registrationLink: eventToEdit.registrationLink || '',
-        sendEmail: eventToEdit.sendEmail || false,
         banner: eventToEdit.banner || 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop',
         agenda: mappedAgenda.length > 0 ? mappedAgenda : [{ id: 'ag-init', time: '18:00', content: 'Đón tiếp người tham gia' }],
         selectedDefenseSlot: eventToEdit.defenseSlot || null
@@ -53,7 +52,6 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
       customLocation: '',
       youtubeLink: '',
       registrationLink: '',
-      sendEmail: false,
       banner: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop',
       agenda: [{ id: 'ag-init', time: '18:00', content: 'Đón tiếp người tham gia' }],
       selectedDefenseSlot: null
@@ -411,7 +409,6 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
       clubName: clubInfo ? clubInfo.name : 'CLB của tôi',
       title: newEvent.title.trim(),
       description: newEvent.description.trim(),
-      expectedParticipants: 0,
       proposalDocsLink: newEvent.proposalDocsLink.trim(),
       location: finalLocation,
       startDate: newEvent.startDate,
@@ -419,7 +416,6 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
       type: newEvent.locationType === 'inside' ? 'Sự kiện trong trường' : 'Sự kiện ngoài trường',
       youtubeLink: newEvent.youtubeLink || '',
       registrationLink: newEvent.registrationLink || '',
-      sendEmail: newEvent.sendEmail,
       banner: newEvent.banner || 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop',
       agenda: newEvent.agenda.map((ag, index) => ({
         id: `ag-${Date.now()}-${index}`,

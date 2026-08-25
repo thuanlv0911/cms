@@ -93,6 +93,17 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
     return `${yyyy}-${mm}-${dd}T00:00`;
   };
 
+  const getMaxDefenseDate = () => {
+    if (!newEvent.startDate) return '';
+    const eventStartDate = new Date(newEvent.startDate);
+    const maxDate = new Date(eventStartDate);
+    maxDate.setDate(eventStartDate.getDate() - 1);
+    const yyyy = maxDate.getFullYear();
+    const mm = String(maxDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(maxDate.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
   const validateStep = (stepNum) => {
     const newErrors = {};
 
@@ -212,19 +223,32 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
       } else {
         const slot = newEvent.selectedDefenseSlot.slot;
         const dateStr = newEvent.selectedDefenseSlot.dateStr;
-        
-        const bookedEventsOnDate = allEvents.filter(e => 
-          e.defenseSlot && 
-          e.defenseSlot.dateStr === dateStr &&
-          (!eventToEdit || e.id !== eventToEdit.id)
-        );
+        const isoDate = newEvent.selectedDefenseSlot.isoDate;
 
-        if (slot === 4) {
-          newErrors.selectedDefenseSlot = 'Slot 4 chỉ dùng làm dự phòng và không thể đặt!';
-        } else if (bookedEventsOnDate.some(e => e.defenseSlot.slot === slot)) {
-          newErrors.selectedDefenseSlot = `Slot ${slot} vào ngày này đã được đăng ký bởi sự kiện khác!`;
-        } else if (slot === 3 && bookedEventsOnDate.some(e => e.defenseSlot.slot === 2)) {
-          newErrors.selectedDefenseSlot = 'Slot 3 bị khoá do Slot 2 vào ngày này đã được đăng ký!';
+        if (newEvent.startDate) {
+          const eventDateOnly = newEvent.startDate.split('T')[0];
+          const defenseDateObj = new Date(isoDate);
+          const eventDateObj = new Date(eventDateOnly);
+
+          if (defenseDateObj >= eventDateObj) {
+            newErrors.selectedDefenseSlot = 'Ngày bảo vệ đề án phải trước ngày diễn ra sự kiện!';
+          }
+        }
+
+        if (!newErrors.selectedDefenseSlot) {
+          const bookedEventsOnDate = allEvents.filter(e => 
+            e.defenseSlot && 
+            e.defenseSlot.dateStr === dateStr &&
+            (!eventToEdit || e.id !== eventToEdit.id)
+          );
+
+          if (slot === 4) {
+            newErrors.selectedDefenseSlot = 'Slot 4 chỉ dùng làm dự phòng và không thể đặt!';
+          } else if (bookedEventsOnDate.some(e => e.defenseSlot.slot === slot)) {
+            newErrors.selectedDefenseSlot = `Slot ${slot} vào ngày này đã được đăng ký bởi sự kiện khác!`;
+          } else if (slot === 3 && bookedEventsOnDate.some(e => e.defenseSlot.slot === 2)) {
+            newErrors.selectedDefenseSlot = 'Slot 3 bị khoá do Slot 2 vào ngày này đã được đăng ký!';
+          }
         }
       }
     }
@@ -726,6 +750,7 @@ const EventWizard = ({ clubInfo, currentUser, onCancel, onSubmit, loading, event
                 <Form.Control
                   type="date"
                   min={new Date().toISOString().split('T')[0]}
+                  max={getMaxDefenseDate()}
                   value={defenseDate}
                   onChange={(e) => {
                     setDefenseDate(e.target.value);

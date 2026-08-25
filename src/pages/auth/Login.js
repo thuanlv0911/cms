@@ -109,12 +109,12 @@ const Login = () => {
               </div>
 
               <div className="mt-4 pt-3 border-top text-center text-muted small">
-                <p className="mb-1"><strong>Tài khoản Demo gợi ý:</strong></p>
+                <p className="mb-1"><strong>Tài khoản:</strong></p>
                 <div className="text-start bg-light p-2 rounded">
-                  <div>• Admin: <code>admin@fpt.edu.vn</code> / <code>123</code></div>
-                  <div>• Phòng PDP: <code>pdp@fpt.edu.vn</code> / <code>123</code></div>
-                  <div>• Chủ nhiệm: <code>president.bg@fpt.edu.vn</code> / <code>123</code></div>
-                  <div>• Sinh viên: <code>student1@fpt.edu.vn</code> / <code>123</code></div>
+                  <div>Admin: <code>admin@fpt.edu.vn</code> / <code>123</code></div>
+                  <div>Phòng PDP: <code>pdp@fpt.edu.vn</code> / <code>123</code></div>
+                  <div>Chủ nhiệm: <code>president.bg@fpt.edu.vn</code> / <code>123</code></div>
+                  <div>Sinh viên: <code>student1@fpt.edu.vn</code> / <code>123</code></div>
                 </div>
               </div>
             </Card.Body>

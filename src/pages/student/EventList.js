@@ -26,9 +26,9 @@ const EventList = () => {
       const dateA = new Date(a.startDate || 0);
       const dateB = new Date(b.startDate || 0);
       if (sortOrder === 'early') {
-        return dateA - dateB;
-      } else {
         return dateB - dateA;
+      } else {
+        return dateA - dateB;
       }
     });
   };

@@ -332,10 +332,16 @@ const AdminDashboard = () => {
                                 </Badge>
                               ) : (
                                 <Badge
-                                  bg={u.isPresident ? "primary-subtle" : "secondary-subtle"}
-                                  className={`${u.isPresident ? "text-primary border-primary-subtle" : "text-secondary border-secondary-subtle"} border px-3 py-2 fw-medium rounded-pill fs-7`}
+                                  bg={u.isPresident ? "primary-subtle" : u.clubId ? "success-subtle" : "secondary-subtle"}
+                                  className={`${
+                                    u.isPresident 
+                                      ? "text-primary border-primary-subtle" 
+                                      : u.clubId 
+                                        ? "text-success border-success-subtle" 
+                                        : "text-secondary border-secondary-subtle"
+                                  } border px-3 py-2 fw-medium rounded-pill fs-7`}
                                 >
-                                  {u.isPresident ? 'Chủ nhiệm' : 'Sinh viên'}
+                                  {u.isPresident ? 'Chủ nhiệm' : u.clubId ? 'Thành viên' : 'Sinh viên'}
                                 </Badge>
                               )}
                             </td>

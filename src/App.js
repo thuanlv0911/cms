@@ -5,6 +5,7 @@ import HeaderNavbar from './components/HeaderNavbar';
 import Footer from './components/Footer';
 import Homepage from './pages/Homepage';
 import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
 import ClubList from './pages/student/ClubList';
 import ClubDetail from './pages/student/ClubDetail';
 import EventList from './pages/student/EventList';
@@ -40,6 +41,7 @@ function App() {
           <Route element={<UserLayout />}>
             <Route path="/" element={<Homepage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/clubs" element={<ClubList />} />
             <Route path="/clubs/:id" element={<ClubDetail />} />
             <Route path="/events" element={<EventList />} />

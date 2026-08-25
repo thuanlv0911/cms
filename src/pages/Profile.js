@@ -77,6 +77,8 @@ const Profile = () => {
               <div className="text-start mt-4 w-100">
                 <p className="mb-2"><strong>Tên đăng nhập:</strong> {currentUser.username}</p>
                 <p className="mb-2"><strong>Email:</strong> {currentUser.email}</p>
+                {currentUser.code && <p className="mb-2"><strong>Mã sinh viên/nhân viên:</strong> {currentUser.code}</p>}
+                {currentUser.dob && <p className="mb-2"><strong>Ngày sinh:</strong> {currentUser.dob}</p>}
                 <p className="mb-0">
                   <strong>Quyền hạn:</strong>{' '}
                   {currentUser.role === 'admin'
